@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRLab — Scientific Research Laboratory for Responsible AI</title>
+<meta name="description" content="SRLab builds trustworthy, human-centered AI systems for a fair and accountable future.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #06080c; --bg2: #0c1018; --surface: #111822; --surface2: #151e2c;
+  --border: #1a2436; --border-light: #243044;
+  --text: #e8ecf2; --text-dim: #6b7a90; --text-mid: #8fa3bd;
+  --accent: #00e5a0; --accent2: #00b8ff;
+  --accent-glow: rgba(0,229,160,0.12); --accent2-glow: rgba(0,184,255,0.10);
+  --purple-glow: rgba(124,92,252,0.10); --gold-glow: rgba(218,165,32,0.12);
+  --gradient: linear-gradient(135deg, #00e5a0, #00b8ff);
+  --font-display: 'Outfit', sans-serif; --font-mono: 'Space Mono', monospace; --font-code: 'JetBrains Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-display); overflow-x: hidden; line-height: 1.6; }
+body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; }
+.grid-bg { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, black, transparent); }
+.orb { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(0,229,160,0.08), transparent 70%); top: -200px; right: -200px; z-index: 0; animation: orbFloat 20s ease-in-out infinite; }
+.orb-2 { position: fixed; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(0,184,255,0.06), transparent 70%); bottom: -150px; left: -150px; z-index: 0; animation: orbFloat 25s ease-in-out infinite reverse; }
+@keyframes orbFloat { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(40px,30px) scale(1.1); } 66% { transform: translate(-30px,-20px) scale(0.95); } }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 14px 0; backdrop-filter: blur(20px); background: rgba(6,8,12,0.8); border-bottom: 1px solid var(--border); }
+nav .container { display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-svg { height: 36px; width: auto; }
+.logo-text { display: flex; flex-direction: column; }
+.logo-text .name { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: var(--accent); letter-spacing: -0.5px; line-height: 1.1; }
+.logo-text .sub { font-family: var(--font-code); font-size: 0.55rem; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; }
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; transition: color 0.3s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta { background: var(--gradient) !important; color: var(--bg) !important; padding: 8px 18px; border-radius: 6px; font-weight: 600 !important; }
+
+.hero { min-height: 100vh; display: flex; align-items: center; padding-top: 100px; }
+.hero-content { max-width: 820px; }
+.hero-badges { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+.hero-badge { font-family: var(--font-code); font-size: 0.7rem; padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.3px; }
+.hero-badge.green { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(0,229,160,0.2); }
+.hero-badge.blue { background: var(--accent2-glow); color: var(--accent2); border: 1px solid rgba(0,184,255,0.2); }
+.hero-badge.gold { background: var(--gold-glow); color: #daa520; border: 1px solid rgba(218,165,32,0.2); }
+.hero h1 { font-size: clamp(2.8rem, 6.5vw, 5.2rem); font-weight: 800; line-height: 1.05; letter-spacing: -2px; margin-bottom: 24px; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
+.gradient-text { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero p { font-size: 1.15rem; color: var(--text-dim); max-width: 620px; line-height: 1.75; margin-bottom: 40px; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; text-decoration: none; cursor: pointer; border: none; transition: all 0.3s; }
+.btn-primary { background: var(--gradient); color: var(--bg); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,160,0.25); }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+.stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 80px 0; opacity: 0; animation: fadeUp 0.8s 1s forwards; }
+.stat { background: var(--surface); padding: 32px 24px; text-align: center; }
+.stat-value { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 700; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+
+section { padding: 100px 0; }
+.section-tag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+.section-tag::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
+.section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+.section-desc { color: var(--text-dim); font-size: 1.05rem; max-width: 600px; margin-bottom: 48px; }
+
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+.project-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; transition: all 0.4s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+.project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gradient); transform: scaleX(0); transform-origin: left; transition: transform 0.4s; }
+.project-card:hover::before { transform: scaleX(1); }
+.project-card:hover { border-color: rgba(0,229,160,0.2); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.project-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 20px; }
+.project-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 10px; }
+.project-card p { color: var(--text-dim); font-size: 0.88rem; line-height: 1.7; margin-bottom: 20px; }
+.project-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-family: var(--font-code); font-size: 0.65rem; color: var(--accent); background: var(--accent-glow); padding: 4px 10px; border-radius: 4px; letter-spacing: 0.3px; }
+.tag.blue { color: var(--accent2); background: var(--accent2-glow); }
+.tag.purple { color: #7c5cfc; background: var(--purple-glow); }
+.project-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+.project-link { font-family: var(--font-code); font-size: 0.68rem; color: var(--accent); text-decoration: none; padding: 4px 12px; border-radius: 4px; border: 1px solid rgba(0,229,160,0.2); transition: all 0.3s; }
+.project-link:hover { background: var(--accent-glow); border-color: var(--accent); }
+
+/* ─── PRODUCTS ─── */
+#products { border-top: 1px solid var(--border); }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.product-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 28px 24px; transition: all 0.4s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+.product-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--gradient); transform: scaleX(0); transform-origin: right; transition: transform 0.4s; }
+.product-card:hover::after { transform: scaleX(1); transform-origin: left; }
+.product-card:hover { border-color: rgba(0,229,160,0.2); transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.25); }
+.product-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.product-emoji { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+.product-emoji.pip { background: var(--accent-glow); }
+.product-emoji.hf { background: var(--accent2-glow); }
+.product-emoji.demo { background: var(--purple-glow); }
+.product-emoji.data { background: var(--gold-glow); }
+.product-head-text h3 { font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+.product-head-text .product-type { font-family: var(--font-code); font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; }
+.product-card > p { color: var(--text-dim); font-size: 0.84rem; line-height: 1.65; margin-bottom: 16px; }
+.product-install { font-family: var(--font-code); font-size: 0.72rem; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; overflow-x: auto; }
+.product-install .dollar { color: var(--text-dim); user-select: none; }
+.product-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.product-stat { font-family: var(--font-code); font-size: 0.65rem; color: var(--text-mid); display: flex; align-items: center; gap: 4px; }
+.product-stat .num { color: var(--accent); font-weight: 700; }
+.product-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+.product-btn { font-family: var(--font-code); font-size: 0.68rem; color: var(--accent); text-decoration: none; padding: 5px 12px; border-radius: 4px; border: 1px solid rgba(0,229,160,0.2); transition: all 0.3s; }
+.product-btn:hover { background: var(--accent-glow); border-color: var(--accent); }
+.product-btn.blue { color: var(--accent2); border-color: rgba(0,184,255,0.2); }
+.product-btn.blue:hover { background: var(--accent2-glow); border-color: var(--accent2); }
+.featured-label { position: absolute; top: 16px; right: 16px; font-family: var(--font-code); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 1px; color: var(--bg); background: var(--gradient); padding: 3px 10px; border-radius: 3px; font-weight: 700; }
+
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.about-visual { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
+.terminal { font-family: var(--font-code); font-size: 0.82rem; line-height: 2.1; }
+.terminal .line { display: flex; gap: 12px; }
+.terminal .prompt { color: var(--accent); }
+.terminal .cmd { color: var(--text); }
+.terminal .comment { color: var(--text-dim); }
+.terminal .highlight { color: var(--accent2); }
+.terminal .cursor { display: inline-block; width: 8px; height: 16px; background: var(--accent); animation: blink 1s step-end infinite; vertical-align: middle; }
+@keyframes blink { 50% { opacity: 0; } }
+.about-text h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; }
+.about-text p { color: var(--text-dim); line-height: 1.8; margin-bottom: 16px; font-size: 0.95rem; }
+.milestone-list { list-style: none; margin-top: 24px; }
+.milestone-list li { display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.milestone-year { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--accent); min-width: 48px; padding-top: 2px; }
+.milestone-text { font-size: 0.9rem; color: var(--text-mid); }
+
+/* ─── LEADERSHIP ─── */
+.leadership-section { margin-top: 80px; }
+.leader-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 48px; display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; position: relative; overflow: hidden; }
+.leader-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gradient); }
+.leader-avatar { width: 140px; height: 140px; border-radius: 16px; background: linear-gradient(135deg, rgba(0,229,160,0.15), rgba(0,184,255,0.15)); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; border: 2px solid var(--border); position: relative; }
+.leader-avatar::after { content: ''; position: absolute; inset: -3px; border-radius: 18px; background: var(--gradient); z-index: -1; opacity: 0.3; }
+.leader-info h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+.leader-role { font-family: var(--font-code); font-size: 0.75rem; color: var(--accent); margin-bottom: 16px; display: block; letter-spacing: 0.3px; }
+.leader-info p { color: var(--text-dim); font-size: 0.92rem; line-height: 1.75; margin-bottom: 16px; }
+.leader-credentials { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.leader-cred { font-family: var(--font-code); font-size: 0.62rem; color: var(--text-mid); background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 5px 12px; border-radius: 6px; display: flex; align-items: center; gap: 6px; }
+.leader-cred .cred-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.leader-links { display: flex; gap: 10px; }
+.leader-link { font-family: var(--font-code); font-size: 0.72rem; color: var(--accent); text-decoration: none; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(0,229,160,0.2); transition: all 0.3s; }
+.leader-link:hover { background: var(--accent-glow); border-color: var(--accent); }
+
+@media (max-width: 768px) {
+  .leader-card { grid-template-columns: 1fr; text-align: center; padding: 32px; gap: 24px; }
+  .leader-avatar { margin: 0 auto; width: 110px; height: 110px; font-size: 2.8rem; }
+  .leader-credentials { justify-content: center; }
+  .leader-links { justify-content: center; }
+}
+
+.papers-list { display: flex; flex-direction: column; gap: 12px; }
+.paper-item { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; transition: all 0.3s; text-decoration: none; color: var(--text); }
+.paper-item:hover { border-color: rgba(0,229,160,0.3); transform: translateX(6px); }
+.paper-info h4 { font-size: 0.95rem; margin-bottom: 6px; line-height: 1.4; }
+.paper-venue { font-family: var(--font-code); font-size: 0.7rem; color: var(--accent); background: var(--accent-glow); padding: 3px 8px; border-radius: 3px; display: inline-block; margin-right: 8px; }
+.paper-venue.blue { color: var(--accent2); background: var(--accent2-glow); }
+.paper-venue.purple { color: #7c5cfc; background: var(--purple-glow); }
+.paper-venue.gold { color: #daa520; background: var(--gold-glow); }
+.paper-info .paper-meta { color: var(--text-dim); font-size: 0.8rem; margin-top: 4px; }
+.paper-arrow { font-size: 1.3rem; color: var(--accent); transition: transform 0.3s; min-width: 24px; }
+.paper-item:hover .paper-arrow { transform: translateX(4px); }
+
+.recognition-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.recognition-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; text-align: center; }
+.recognition-icon { font-size: 2rem; margin-bottom: 12px; }
+.recognition-card h4 { font-size: 1rem; margin-bottom: 8px; }
+.recognition-card p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.6; }
+.collab-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 40px; }
+.collab-pill { font-family: var(--font-code); font-size: 0.73rem; color: var(--text-mid); background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 10px 20px; display: flex; align-items: center; gap: 8px; }
+.collab-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.collab-pill .dot-blue { background: var(--accent2); }
+.collab-pill .dot-purple { background: #7c5cfc; }
+.collab-pill .dot-gold { background: #daa520; }
+.collab-category-label { font-family: var(--font-code); font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; }
+
+.funding-opps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+.funding-opp { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; transition: all 0.3s; display: flex; gap: 16px; align-items: flex-start; }
+.funding-opp:hover { border-color: rgba(0,229,160,0.25); transform: translateY(-2px); }
+.funding-opp-icon { width: 42px; height: 42px; min-width: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.funding-opp-icon.gov { background: var(--accent-glow); }
+.funding-opp-icon.ind { background: var(--accent2-glow); }
+.funding-opp-icon.intl { background: var(--purple-glow); }
+.funding-opp h4 { font-size: 0.92rem; margin-bottom: 4px; }
+.funding-opp p { color: var(--text-dim); font-size: 0.8rem; line-height: 1.5; }
+.opp-type { font-family: var(--font-code); font-size: 0.6rem; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 8px; display: inline-block; padding: 3px 8px; border-radius: 3px; }
+.opp-type.gov-tag { color: var(--accent); background: var(--accent-glow); }
+.opp-type.ind-tag { color: var(--accent2); background: var(--accent2-glow); }
+.opp-type.intl-tag { color: #7c5cfc; background: var(--purple-glow); }
+
+.funding-section { text-align: center; padding: 120px 0; }
+.funding-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 64px; position: relative; overflow: hidden; }
+.funding-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(0,229,160,0.06), transparent 60%); }
+.funding-card h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; position: relative; }
+.funding-card > p { color: var(--text-dim); font-size: 1.05rem; max-width: 640px; margin: 0 auto 40px; position: relative; line-height: 1.7; }
+.funding-card .btn { position: relative; }
+.funding-badges { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; margin-top: 40px; position: relative; }
+.badge { display: flex; align-items: center; gap: 8px; color: var(--text-dim); font-size: 0.82rem; }
+.badge-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--accent); }
+
+footer { border-top: 1px solid var(--border); padding: 48px 0; }
+.footer-content { display: flex; justify-content: space-between; align-items: center; }
+.footer-left p { color: var(--text-dim); font-size: 0.82rem; margin-top: 6px; }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+.footer-links a:hover { color: var(--accent); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+.mission-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px 40px; position: relative; overflow: hidden; }
+.mission-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(0,229,160,0.05), transparent 60%); pointer-events: none; }
+.mission-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gradient); }
+.nonprofit-badge { font-family: var(--font-code); font-size: 0.78rem; color: var(--text-mid); background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.15); border-radius: 8px; padding: 10px 20px; display: inline-flex; align-items: center; gap: 10px; position: relative; }
+.membership-pill { font-family: var(--font-code); font-size: 0.73rem; color: var(--text-mid); background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 10px 20px; display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+.membership-pill:hover { border-color: rgba(0,229,160,0.3); transform: translateY(-2px); }
+.mem-icon { font-size: 0.9rem; }
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+@media (max-width: 768px) {
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .about-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .funding-badges { flex-direction: column; align-items: center; gap: 12px; }
+  .footer-content { flex-direction: column; gap: 24px; text-align: center; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: 1fr; }
+  .funding-opps-grid { grid-template-columns: 1fr; }
+  .hero h1 { letter-spacing: -1px; }
+  .recognition-grid { grid-template-columns: 1fr; }
+  .collab-row { gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb"></div>
+<div class="orb-2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <a href="#" class="logo">
+      <svg class="logo-svg" viewBox="0 0 120 128" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00e5a0"/><stop offset="100%" stop-color="#00b8ff"/></linearGradient></defs>
+        <polygon points="60,4 112,34 112,94 60,124 8,94 8,34" fill="none" stroke="url(#lg)" stroke-width="3" stroke-linejoin="round"/>
+        <polygon points="60,18 100,42 100,86 60,110 20,86 20,42" fill="none" stroke="url(#lg)" stroke-width="0.8" opacity="0.25"/>
+        <text font-family="'Outfit',sans-serif" font-size="44" font-weight="800" fill="url(#lg)" text-anchor="middle" x="60" y="78" letter-spacing="-2">SR</text>
+      </svg>
+      <div class="logo-text">
+        <span class="name">SRLab</span>
+        <span class="sub">Responsible AI</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#products">Products</a>
+      <a href="#research">Research</a>
+      <a href="#about">About</a>
+      <a href="#recognition">Recognition</a>
+      <a href="#opportunities">Funding</a>
+      <a href="#governance">Governance</a>
+      <a href="#contact" class="nav-cta">Collaborate</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badges">
+        <span class="hero-badge green">&#9670; Top 2% Scientists Worldwide</span>
+        <span class="hero-badge blue">&#9670; EU Horizon Partner </span>
+        <span class="hero-badge green">&#9670; NeurIPS 2025 &middot; 6 Acceptances</span>
+        <span class="hero-badge gold">&#9670; CIHR Award Holder</span>
+        <span class="hero-badge blue">&#9670; Canadian Registered Non-Profit</span>
+      </div>
+      <h1>
+        Trustworthy AI<br>
+        for a <span class="gradient-text">Fair &<br>Accountable</span> Future
+      </h1>
+      <p>
+        SRLab is a scientific research laboratory advancing responsible, human-centered AI.
+        We build open-source benchmarks, fairness toolkits, and governance frameworks that
+        bridge the gap between cutting-edge AI research and real-world societal impact.
+      </p>
+      <div class="hero-buttons">
+        <a href="#projects" class="btn btn-primary">
+          <span>Explore Our Work</span>
+          <span>&rarr;</span>
+        </a>
+        <a href="#research" class="btn btn-outline">
+          <span>Publications</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="container">
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-value">100+</div><div class="stat-label">Publications</div></div>
+    <div class="stat"><div class="stat-value">2,500+</div><div class="stat-label">Citations</div></div>
+    <div class="stat"><div class="stat-value">10+</div><div class="stat-label">Active Projects</div></div>
+    <div class="stat"><div class="stat-value">15+</div><div class="stat-label">Institutional Partners</div></div>
+  </div>
+</div>
+
+<!-- MISSION STATEMENT -->
+<section id="mission" style="padding: 60px 0 40px;">
+  <div class="container">
+    <div class="mission-card reveal">
+      <div class="section-tag" style="justify-content: center;">Our Mission</div>
+      <h2 style="font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -1px; text-align: center; margin-bottom: 20px; position: relative;">Advancing <span class="gradient-text">Responsible AI</span> for the Public Good</h2>
+      <p style="color: var(--text-dim); font-size: 1.05rem; max-width: 760px; margin: 0 auto 28px; text-align: center; line-height: 1.8; position: relative;">SRLab is a <strong style="color: var(--accent);">Canadian registered non-profit organization</strong> dedicated to building trustworthy, human-centered AI systems that serve society equitably. We develop open-source benchmarks, fairness toolkits, and governance frameworks — ensuring AI technology is fair, transparent, and accountable. Our work bridges the gap between cutting-edge AI research and real-world societal impact, with a commitment to sustainability and public benefit.</p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative;">
+        <div class="nonprofit-badge"><span style="font-size: 1.1rem;">🇨🇦</span> <span>Canadian Non-Profit Organization</span> </div>
+      </div>
+    </div>
+
+    <div class="memberships-bar reveal" style="margin-top: 48px;">
+      <div class="section-tag" style="justify-content: center;">Professional Memberships & Affiliations</div>
+      <div class="collab-row" style="margin-top: 24px;">
+        <div class="membership-pill"><span class="mem-icon">🔬</span> IEEE Member</div>
+        <div class="membership-pill"><span class="mem-icon">💻</span> ACM Member</div>
+        <div class="membership-pill"><span class="mem-icon">🧠</span> NeurIPS Program Committee</div>
+        <div class="membership-pill"><span class="mem-icon">🎤</span> IASEAI — Invited Speaker</div>
+        <div class="membership-pill"><span class="mem-icon">📖</span> Nature Reviewer</div>
+        <div class="membership-pill"><span class="mem-icon">📝</span> Springer Editorial Board</div>
+        <div class="membership-pill"><span class="mem-icon">📚</span> Elsevier Guest Editor</div>
+        <div class="membership-pill"><span class="mem-icon">🇪🇺</span> EU Horizon AIXPERT Consortium</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-tag">What We Build</div>
+    <h2 class="section-title reveal">Research Projects & Benchmarks</h2>
+    <p class="section-desc reveal">Open-source tools, benchmarks, and frameworks for building fair, safe, and explainable AI systems.</p>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <div class="project-icon">🧠</div>
+        <h3>HumaniBench</h3>
+        <p>The first comprehensive benchmark for evaluating large multimodal models on human-centric principles — fairness, ethics, empathy, inclusivity, and robustness. 32,000 expert-verified image–question pairs across 7 tasks.</p>
+        <div class="project-tags"><span class="tag">Multimodal AI</span><span class="tag">Fairness</span><span class="tag blue">Benchmarking</span></div>
+        <div class="project-links">
+          <a href="https://vectorinstitute.github.io/humanibench/" target="_blank" class="project-link">Project &rarr;</a>
+          <a href="https://arxiv.org/abs/2505.11454" target="_blank" class="project-link">Paper</a>
+          <a href="https://huggingface.co/datasets/vector-institute/HumaniBench" target="_blank" class="project-link">Dataset</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-icon">🎵</div>
+        <h3>SONIC-O1</h3>
+        <p>A real-world benchmark for evaluating multimodal LLMs on audio-video understanding. 231 videos, ~60 hours, 4,958 human-verified QAs across 13 conversational domains with demographic fairness analysis.</p>
+        <div class="project-tags"><span class="tag">Audio-Video AI</span><span class="tag">Fairness</span><span class="tag blue">5000+ Samples</span></div>
+        <div class="project-links">
+          <a href="https://vectorinstitute.github.io/sonic-o1/" target="_blank" class="project-link">Project &rarr;</a>
+          <a href="https://arxiv.org/abs/2601.21666" target="_blank" class="project-link">Paper</a>
+          <a href="https://huggingface.co/datasets/vector-institute/sonic-o1" target="_blank" class="project-link">Dataset</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-2">
+        <div class="project-icon">🤖</div>
+        <h3>R&sup2;A&sup2; &mdash; Responsible Agentic Reasoning</h3>
+        <p>A framework for Responsible Reasoning AI Agents — LLM-powered agents that embed fairness, privacy, transparency, and auditability controls throughout every reasoning step, not just the final output.</p>
+        <div class="project-tags"><span class="tag">Agents</span><span class="tag">Safety</span><span class="tag blue">Explainability</span><span class="tag blue">Governance</span></div>
+        <div class="project-links">
+          <a href="https://www.techrxiv.org/doi/full/10.36227/techrxiv.175735299.97215847" target="_blank" class="project-link">Paper &rarr;</a>
+        </div>
+      </div>
+
+
+
+
+
+      <div class="project-card reveal reveal-delay-2">
+        <div class="project-icon">🌿</div>
+        <h3>Green AI Optimization Toolkit</h3>
+        <p>Tracking the cumulative carbon and water footprint of open-source AI derivatives. Proposes Data and Impact Accounting (DIA) — a coordination mechanism for ecosystem-level environmental visibility.</p>
+        <div class="project-tags"><span class="tag">Efficiency</span><span class="tag">LLM Optimization</span><span class="tag blue">Sustainability</span></div>
+        <div class="project-links">
+          <a href="https://vectorinstitute.github.io/ai-impact-accounting/" target="_blank" class="project-link">Project &rarr;</a>
+          <a href="https://arxiv.org/abs/2601.21632" target="_blank" class="project-link">Paper</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-icon">📰</div>
+        <h3>News Bias & Misinformation Detection</h3>
+        <p>The News Media Bias Plus Project — advancing understanding of media bias and disinformation through AI. Cross-source bias analysis, disinformation alerts, and interactive visualizations.</p>
+        <div class="project-tags"><span class="tag">NLP</span><span class="tag">Vision-Language</span><span class="tag blue">Ethics</span></div>
+        <div class="project-links">
+          <a href="https://vectorinstitute.github.io/Newsmediabias-plus/" target="_blank" class="project-link">Project &rarr;</a>
+          <a href="https://huggingface.co/collections/vector-institute/newsmediabias-plus-6713b5d93f36e628d64665f0" target="_blank" class="project-link">HuggingFace</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal reveal-delay-1">
+        <div class="project-icon">🔍</div>
+        <h3>Transparency in Agentic AI</h3>
+        <p>A comprehensive survey of interpretability, explainability, and governance for LLM-based agentic systems. Introduces a five-axis taxonomy (WHAT, WHY, HOW, WHEN, WHO) and the Minimal Explanation Packet (MEP).</p>
+        <div class="project-tags"><span class="tag purple">Survey</span><span class="tag">XAI</span><span class="tag blue">Governance</span></div>
+        <div class="project-links">
+          <a href="https://vectorinstitute.github.io/Agentic-Transparency/" target="_blank" class="project-link">Project &rarr;</a>
+          <a href="https://engrxiv.org/preprint/view/6451" target="_blank" class="project-link">Paper</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="container">
+    <div class="section-tag">Products</div>
+    <h2 class="section-title reveal">Featured Products & Tools</h2>
+    <p class="section-desc reveal">Production-ready AI tools, Python packages, datasets, and platforms available for developers and researchers.</p>
+    <div class="products-grid">
+
+      <div class="product-card reveal">
+        <span class="featured-label">Featured</span>
+        <div class="product-head">
+          <div class="product-emoji pip">⚖️</div>
+          <div class="product-head-text">
+            <h3>FairSense-AI</h3>
+            <span class="product-type">Python Package &middot; PyPI</span>
+          </div>
+        </div>
+        <p>AI-driven bias detection for text and images with built-in risk management and Green AI optimization. Integrates NIST AI Risk Framework and MIT Risk Repository.</p>
+        <div class="product-install"><span class="dollar">$</span> pip install fair-sense-ai</div>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">LLM+VLM</span> Multimodal</span>
+          <span class="product-stat"><span class="num">0.012kg</span> CO₂/hr</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://pypi.org/project/fair-sense-ai" target="_blank" class="product-btn">PyPI &rarr;</a>
+          <a href="https://vectorinstitute.github.io/FairSense-AI/" target="_blank" class="product-btn">Docs</a>
+          <a href="https://colab.research.google.com/drive/1en8JtZTAIa5MuV5OZWYNteYl95Ql9xy7" target="_blank" class="product-btn blue">Colab Demo</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <span class="featured-label">Featured</span>
+        <div class="product-head">
+          <div class="product-emoji pip">🔍</div>
+          <div class="product-head-text">
+            <h3>Dbias</h3>
+            <span class="product-type">Python Package &middot; PyPI</span>
+          </div>
+        </div>
+        <p>The first configurable bias detection and debiasing pipeline for news articles. Detects, recognizes, and replaces biased language using a 3-model Transformer pipeline.</p>
+        <div class="product-install"><span class="dollar">$</span> pip install Dbias</div>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">3</span> Model Pipeline</span>
+          <span class="product-stat"><span class="num">91.8%</span> Accuracy</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://pypi.org/project/Dbias/" target="_blank" class="product-btn">PyPI &rarr;</a>
+          <a href="https://github.com/dreji18/Fairness-in-AI" target="_blank" class="product-btn">Code</a>
+          <a href="https://link.springer.com/article/10.1007/s41060-022-00359-4" target="_blank" class="product-btn blue">Paper</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <span class="featured-label">Featured</span>
+        <div class="product-head">
+          <div class="product-emoji pip">🔓</div>
+          <div class="product-head-text">
+            <h3>unbias-plus</h3>
+            <span class="product-type">Python Package &middot; PyPI</span>
+          </div>
+        </div>
+        <p>State-of-the-art text analysis and debiasing toolkit. Classifies bias, detects biased entities via NER, and generates debiased text — built on BERT, RoBERTa, and Meta LLaMA-2-7B models.</p>
+        <div class="product-install"><span class="dollar">$</span> pip install unbias-plus</div>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">LLM</span> Powered</span>
+          <span class="product-stat"><span class="num">3-Stage</span> Pipeline</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://pypi.org/project/unbias-plus/" target="_blank" class="product-btn">PyPI &rarr;</a>
+          <a href="https://vectorinstitute.github.io/unbias-plus/" target="_blank" class="product-btn">Docs</a>
+          <a href="https://huggingface.co/collections/vector-institute/newsmediabias-plus-6713b5d93f36e628d64665f0" target="_blank" class="product-btn blue">HuggingFace</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <div class="product-head">
+          <div class="product-emoji demo">📰</div>
+          <div class="product-head-text">
+            <h3>GUS-Net</h3>
+            <span class="product-type">Bias Classification Model</span>
+          </div>
+        </div>
+        <p>Span-level social bias classification in text that detects Generalizations, Unfairness, and Stereotypes — going beyond sentence-level detection to pinpoint exact bias spans.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">Span</span> Level</span>
+          <span class="product-stat"><span class="num">3</span> Bias Types</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://huggingface.co/collections/ethical-spectacle/gus-net-social-bias-ner-66edfe93801ea45d7a26a10f" target="_blank" class="product-btn">Project &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-head">
+          <div class="product-emoji pip">🏷️</div>
+          <div class="product-head-text">
+            <h3>NBias</h3>
+            <span class="product-type">NLP Framework</span>
+          </div>
+        </div>
+        <p>Token-level bias identification framework using a custom BIAS named entity. Works across social media, healthcare, and job hiring domains with transformer-based classification.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">3</span> Domains</span>
+          <span class="product-stat"><span class="num">Expert Syst.</span> Appl.</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://www.sciencedirect.com/science/article/abs/pii/S0957417423020444" target="_blank" class="product-btn">Paper &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="product-head">
+          <div class="product-emoji demo">🛡️</div>
+          <div class="product-head-text">
+            <h3>FakeWatch</h3>
+            <span class="product-type">Fake News Detection Framework</span>
+          </div>
+        </div>
+        <p>A comprehensive fake news detection framework combining traditional ML and state-of-the-art Language Models. Curated dataset of North American election-related news articles.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">ML+LM</span> Hybrid</span>
+          <span class="product-stat"><span class="num">Election</span> Focus</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://link.springer.com/article/10.1007/s13278-024-01290-1" target="_blank" class="product-btn">Paper &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <div class="product-head">
+          <div class="product-emoji demo">🩺</div>
+          <div class="product-head-text">
+            <h3>COVID-19 Risk Detection (NLP)</h3>
+            <span class="product-type">Clinical NLP &middot; Proof of Concept</span>
+          </div>
+        </div>
+        <p>Clinical application of NLP for detecting COVID-19 risks from text data. Transformer-based approach deployed for real-time public health risk identification and epidemiological monitoring.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">MDPI</span> Published</span>
+          <span class="product-stat"><span class="num">Clinical</span> Application</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://pubmed.ncbi.nlm.nih.gov/36560764/" target="_blank" class="product-btn">Paper &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-head">
+          <div class="product-emoji data">🧬</div>
+          <div class="product-head-text">
+            <h3>Biomedical NER at Scale</h3>
+            <span class="product-type">NLP for Biomedicine &middot; Proof of Concept</span>
+          </div>
+        </div>
+        <p>Large-scale named entity recognition applied to biomedicine. NLP pipeline for extracting biomedical entities from clinical and research text at population scale.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">PLOS</span> Digital Health</span>
+          <span class="product-stat"><span class="num">Large</span> Scale</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://journals.plos.org/digitalhealth/article?id=10.1371/journal.pdig.0000152" target="_blank" class="product-btn">Paper &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="product-head">
+          <div class="product-emoji data">📊</div>
+          <div class="product-head-text">
+            <h3>Context-Aware Recommender Systems</h3>
+            <span class="product-type">IoT &middot; Computer Science Review</span>
+          </div>
+        </div>
+        <p>Comprehensive overview of context-aware recommendation strategies — foundational work covering IoT-integrated systems, temporal dynamics, and user modeling. Published in Computer Science Review (Elsevier).</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">Elsevier</span> CSR</span>
+          <span class="product-stat"><span class="num">Foundational</span> Survey</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://www.sciencedirect.com/science/article/abs/pii/S1574013718302120" target="_blank" class="product-btn">Paper &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-head">
+          <div class="product-emoji data">🏛️</div>
+          <div class="product-head-text">
+            <h3>IT Infrastructure & Cloud Advisory</h3>
+            <span class="product-type">Advisory &middot; Digital Transformation</span>
+          </div>
+        </div>
+        <p>Enterprise-grade IT infrastructure advisory supporting SRLab's operational resilience. ITIL-based process design, Azure cloud management, cybersecurity compliance, and scalable deployment architecture for research infrastructure at institutional scale.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">ITIL</span> Certified</span>
+          <span class="product-stat"><span class="num">Azure</span> Admin</span>
+          <span class="product-stat"><span class="num">10+</span> Years Enterprise</span>
+        </div>
+        <div class="product-actions">
+          <a href="#about" class="product-btn">Advisory Board &rarr;</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <span class="featured-label">Featured</span>
+        <div class="product-head">
+          <div class="product-emoji hf">🤗</div>
+          <div class="product-head-text">
+            <h3>HuggingFace Collections</h3>
+            <span class="product-type">Datasets &middot; Models &middot; Leaderboards</span>
+          </div>
+        </div>
+        <p>Open datasets and leaderboards on HuggingFace: HumaniBench (32K pairs), SONIC-O1 (4,958 QAs), NewsMediaBias-Plus, BEADs, and VLDBench — all freely available.</p>
+        <div class="product-stats">
+          <span class="product-stat"><span class="num">5+</span> Datasets</span>
+          <span class="product-stat"><span class="num">600+</span> Downloads</span>
+        </div>
+        <div class="product-actions">
+          <a href="https://huggingface.co/collections/vector-institute/newsmediabias-plus-6713b5d93f36e628d64665f0" target="_blank" class="product-btn blue">HuggingFace &rarr;</a>
+          <a href="https://huggingface.co/datasets/vector-institute/HumaniBench" target="_blank" class="product-btn blue">HumaniBench</a>
+          <a href="https://huggingface.co/spaces/vector-institute/sonic-o1-leaderboard" target="_blank" class="product-btn blue">Leaderboard</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+  <div class="container">
+    <div class="section-tag">Research</div>
+    <h2 class="section-title reveal">Selected Publications</h2>
+    <p class="section-desc reveal">Peer-reviewed papers in top venues spanning responsible AI, multimodal fairness, AI safety, governance, and network systems.</p>
+    <div class="papers-list">
+      <a href="https://arxiv.org/abs/2502.08650" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>Who is Responsible? The Data, Models, Users or Regulations? A Comprehensive Survey on Responsible Generative AI for a Sustainable Future</h4><div class="paper-meta"><span class="paper-venue">ACM Computing Surveys</span> Raza, S., Qureshi, R., Zahid, A. et al., 2025 &middot; PRISMA review of 232 studies</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://www.sciencedirect.com/science/article/abs/pii/S2542660521000287" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>Reinforcement Learning-Based Fuzzy Geocast Routing Protocol for Opportunistic Networks</h4><div class="paper-meta"><span class="paper-venue gold">Internet of Things (Elsevier)</span> Khalid, K., Woungang, I., Dhurandher, S.K., Singh, J., 2021</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://www.sciencedirect.com/science/article/abs/pii/S2542660521001050" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>A Jamming Attack Detection Technique for Opportunistic Networks</h4><div class="paper-meta"><span class="paper-venue gold">Internet of Things (Elsevier)</span> Singh, J., Woungang, I., Dhurandher, S.K., Khalid, K., 2022</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://ieeexplore.ieee.org/abstract/document/7794469" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>An Energy-Efficient Routing Protocol for Infrastructure-Less Opportunistic Networks</h4><div class="paper-meta"><span class="paper-venue blue">IEEE Conference</span> Khalid, K., Woungang, I., Dhurandher, S.K. et al., 2016</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://www.sciencedirect.com/science/article/pii/S2666651026000069" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>TRiSM for Agentic AI: A Review of Trust, Risk, and Security Management in LLM-based Agentic Multi-Agent Systems</h4><div class="paper-meta"><span class="paper-venue purple">AI Open Journal</span> Raza, S., Sapkota, R., Karkee, M., Emmanouilidis, C., 2026</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://www.sciencedirect.com/science/article/abs/pii/S1566253525011546" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>VLDBench: Benchmarking Vision-Language Disinformation Detection</h4><div class="paper-meta"><span class="paper-venue gold">Information Fusion</span> Raza, S., Bashir, S.R., Emmanouilidis, C., Shah Mubarak, et al., 2025</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://link.springer.com/article/10.1007/s10994-025-06767-4" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>Developing Safe and Responsible Large Language Models</h4><div class="paper-meta"><span class="paper-venue">Machine Learning (Springer)</span> Raza, S., Bashir, S.R., 2025</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://arxiv.org/abs/2505.17870" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>Just as Humans Need Vaccines, So Do Models: Model Immunization to Combat Falsehoods</h4><div class="paper-meta"><span class="paper-venue">Preprint</span> Raza, S., 2025</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+      <a href="https://arxiv.org/abs/2503.02865" target="_blank" class="paper-item reveal">
+        <div class="paper-info"><h4>FairSense-AI: Responsible AI Meets Sustainability</h4><div class="paper-meta"><span class="paper-venue">Preprint</span> Raza, S., Chettiar, M.S., Yousefabadi, M., Khan, T., Lotif, M., 2025 &middot; Multimodal bias detection + Green AI</div></div>
+        <span class="paper-arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="terminal">
+          <div class="line"><span class="prompt">$</span><span class="cmd">cat team.txt</span></div>
+          <div class="line"><span class="comment">&rarr; Dr. Syed Raza Bashir — Founder</span></div>
+          <div class="line"><span class="comment">&rarr; Dr. Shaina Raza — Senior Research Advisor</span></div>
+          <div class="line"><span class="comment">&rarr; Dr. Khurram Khalid — Scientist</span></div>
+          <div class="line"><span class="comment">&rarr; Shujaat Feroze — Advisor, IT Infrastructure</span></div>
+          <div class="line"><span class="comment">&rarr; + Research Interns & Students</span></div>
+          <div class="line"><span class="prompt">$</span><span class="cmd">cat affiliations.txt</span></div>
+          <div class="line"><span class="comment">&rarr; Vector Institute for AI</span></div>
+          <div class="line"><span class="comment">&rarr; Toronto Metropolitan University</span></div>
+          <div class="line"><span class="prompt">$</span><span class="cmd">cat mission.txt</span></div>
+          <div class="line"><span class="highlight">&rarr; Responsible & trustworthy AI</span></div>
+          <div class="line"><span class="highlight">&rarr; Multimodal fairness benchmarks</span></div>
+          <div class="line"><span class="highlight">&rarr; AI governance & safety tools</span></div>
+          <div class="line"><span class="highlight">&rarr; Green & sustainable AI</span></div>
+          <div class="line"><span class="prompt">$</span><span class="cmd">echo $STATUS</span></div>
+          <div class="line"><span class="comment">&rarr; Building. Publishing. Seeking partners.</span></div>
+          <div class="line"><span class="prompt">$</span><span class="cursor"></span></div>
+        </div>
+      </div>
+      <div class="about-text reveal" style="text-align: justify;">
+        <div class="section-tag">About SRLab</div>
+        <h3>Where Science Meets<br>Societal Responsibility</h3>
+        <p>SRLab (Scientific Research Laboratory for Responsible AI) was founded by <strong style="color:var(--text);">Dr. Syed Raza Bashir</strong> — a Capstone Supervisor at Sheridan College, Humber College, and Conestoga College, and Research Advisor guiding the lab's strategic direction and institutional partnerships. He brings direct board-level governance and digital transformation experience as former Director of IT (Board-elected) at York Condominium Corporation (YCC 76, 2019–2025), where he led multi-phase cloud migration, IT modernization, and cross-functional governance initiatives — skills directly aligned with large-scale, multi-stakeholder programs like EU Horizon projects. The research program is led by <strong style="color:var(--text);">Dr. Shaina Raza</strong> — a Top 2% Scientists (Stanford/Elsevier), Responsible AI Leader of the Year, and CIHR Award holder. She serves as Senior Research Advisor, leading the lab's open-source benchmarks, fairness toolkits, and governance frameworks across 100+ peer-reviewed publications. <strong style="color:var(--text);">Dr. Khurram Khalid</strong> serves as Scientist, and <strong style="color:var(--text);">Shujaat Feroze</strong> (M.S., University of Wollongong) serves on the Advisory Board for IT Infrastructure — bringing over a decade of enterprise IT leadership across organizations like Telstra, Qantas, Saunders International (ASX:SND), and Comcare (Australian Government). Together with a growing team of Research Interns and graduate students from partner institutions, we collaborate across 6+ institutions globally — publishing in top venues like NeurIPS, EMNLP, ACM, Information Fusion, and Springer.</p>
+        <ul class="milestone-list">
+          <li><div class="milestone-year">Phase 1</div><div class="milestone-text">SRLab founded by Dr. Syed Raza Bashir. Early bias detection work published at AAAI/ACM AIES.</div></li>
+          <li><div class="milestone-year">Phase 2</div><div class="milestone-text">Launch of multimodal fairness benchmarks — HumaniBench, SONIC-O1. Stanford Top 2% Scientists recognition.</div></li>
+          <li><div class="milestone-year">Phase 3</div><div class="milestone-text">Expansion into agentic AI safety (R&sup2;A&sup2;, FairSense-AI). NeurIPS 6 acceptances. Responsible AI Leader of the Year. CIHR Award. Incorporated as Canadian non-profit (Corp. No. 1697413-9).</div></li>
+          <li><div class="milestone-year">Next</div><div class="milestone-text">Scaling research operations as a Canadian non-profit. Expanding industry partnerships, open-source tools, and seeking strategic funding partners for global impact.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECOGNITION -->
+<section id="recognition">
+  <div class="container">
+    <div class="section-tag">Recognition</div>
+    <h2 class="section-title reveal">Awards & Impact</h2>
+    <p class="section-desc reveal">Recognized globally for leadership in responsible AI research and practice.</p>
+    <div class="recognition-grid">
+      <div class="recognition-card reveal"><div class="recognition-icon">🏆</div><h4>Responsible AI Leader of the Year</h4><p>Women in AI Summit & Awards 2025 (North America) — for leadership in ethical and trustworthy AI.</p></div>
+      <div class="recognition-card reveal reveal-delay-1"><div class="recognition-icon">🔬</div><h4>Top 2% Scientists Worldwide</h4><p>Stanford / Elsevier 2024–2025 — recognized among the world's most impactful researchers.</p></div>
+      <div class="recognition-card reveal reveal-delay-2"><div class="recognition-icon">🏥</div><h4>CIHR Award Holder</h4><p>Canadian Institutes of Health Research — supporting responsible AI research in health equity and public health.</p></div>
+      <div class="recognition-card reveal reveal-delay-3"><div class="recognition-icon">🇪🇺</div><h4>EU Horizon Partner</h4><p>Selected as 3 of 137 projects for trustworthy AI — partnering with Vector Institute (Grant 101214389).</p></div>
+      <div class="recognition-card reveal"><div class="recognition-icon">📄</div><h4>NeurIPS, ICML 2025 — 6+ Acceptances</h4><p>Education materials, workshop papers, and posters on AI fairness, sustainability, and agentic safety.</p></div>
+      <div class="recognition-card reveal reveal-delay-1"><div class="recognition-icon">🎤</div><h4>Keynote Speakers</h4><p>Delivered keynote talks at IEEE SMC, ResearchTrend.AI, and academic/industry venues on Responsible AI and Multimodal Fairness.</p></div>
+          <div class="recognition-card reveal reveal-delay-1"><div class="recognition-icon">📝</div><h4>Editorial & Review Service</h4><p>Nature reviewer. Editorial member at Springer Discover Computing. NeurIPS main track PC. Guest editor for Elsevier journals.</p></div>
+      <div class="recognition-card reveal"><div class="recognition-icon">🏛️</div><h4>AI Governance Workshop Co-Organizer</h4><p>Co-organized the AI Governance Workshop (2025) — policy, risk, and audit frameworks for trustworthy AI systems.</p></div>
+
+    </div>
+    <div class="reveal" style="text-align: center; margin-top: 60px;">
+      <div class="section-tag" style="justify-content: center;">Collaborations & Affiliations</div>
+
+      <div style="margin-top: 32px;">
+        <div class="collab-category-label">Academic & Research Partners</div>
+        <div class="collab-row">
+          <div class="collab-pill"><span class="dot"></span>Vector Institute for AI</div>
+          <div class="collab-pill"><span class="dot"></span>University of Toronto</div>
+          <div class="collab-pill"><span class="dot"></span>Toronto Metropolitan University</div>
+          <div class="collab-pill"><span class="dot"></span>University of Wollongong</div>
+          <div class="collab-pill"><span class="dot"></span>Cornell University</div>
+          <div class="collab-pill"><span class="dot"></span>University of Central Florida</div>
+          <div class="collab-pill"><span class="dot"></span>University of Guelph</div>
+          <div class="collab-pill"><span class="dot"></span>University of Tennessee HSC</div>
+          <div class="collab-pill"><span class="dot"></span>Clarkson University</div>
+          <div class="collab-pill"><span class="dot"></span>Arizona State University</div>
+          <div class="collab-pill"><span class="dot"></span>Mayo Clinic</div>
+          <div class="collab-pill"><span class="dot"></span>Harvard / MGH</div>
+          <div class="collab-pill"><span class="dot"></span>Sheridan College</div>
+          <div class="collab-pill"><span class="dot"></span>Humber College</div>
+          <div class="collab-pill"><span class="dot"></span>Conestoga College</div>
+          <div class="collab-pill"><span class="dot"></span>CIFAR — AI & Society</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <div class="collab-category-label">Professional Bodies & Conferences</div>
+        <div class="collab-row">
+          <div class="collab-pill"><span class="dot dot-blue"></span>IEEE</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>ACM</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>NeurIPS</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>AAAI</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>EMNLP / ACL</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>IASEAI</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>ASONAM</div>
+          <div class="collab-pill"><span class="dot dot-blue"></span>IEEE SMC</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <div class="collab-category-label">Publishers & Editorial Boards</div>
+        <div class="collab-row">
+          <div class="collab-pill"><span class="dot dot-purple"></span>Nature (Reviewer)</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>Springer — Machine Learning</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>Springer — Discover Computing</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>Elsevier — Information Fusion</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>Elsevier — Computer Science Review</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>ACM Computing Surveys</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>ACM TiST</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>PLOS Digital Health</div>
+          <div class="collab-pill"><span class="dot dot-purple"></span>MDPI</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <div class="collab-category-label">International & Government</div>
+        <div class="collab-row">
+          <div class="collab-pill"><span class="dot dot-gold"></span>EU Horizon Europe (AIXPERT)</div>
+          <div class="collab-pill"><span class="dot dot-gold"></span>CIHR — Canadian Institutes of Health Research</div>
+          <div class="collab-pill"><span class="dot dot-gold"></span>NSERC</div>
+          <div class="collab-pill"><span class="dot dot-gold"></span>Stanford / Elsevier (Top 2%)</div>
+          <div class="collab-pill"><span class="dot dot-gold"></span>Partnership on AI</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FUNDING OPPORTUNITIES -->
+<section id="opportunities">
+  <div class="container">
+    <div class="section-tag">Funding Landscape</div>
+    <h2 class="section-title reveal">Targeted Funding Opportunities</h2>
+    <p class="section-desc reveal">Active grants, programs, and partnerships aligned with our research in responsible AI, fairness, and governance.</p>
+    <div class="funding-opps-grid">
+      <div class="funding-opp reveal"><div class="funding-opp-icon gov">🇨🇦</div><div><h4>NSERC Grant</h4><p>Canada's primary research funding for natural sciences & engineering. Core support for responsible AI research programs.</p><span class="opp-type gov-tag">Government &middot; Canada</span></div></div>
+      <div class="funding-opp reveal"><div class="funding-opp-icon gov">🇨🇦</div><div><h4>CIFAR — AI & Society</h4><p>Programs on AI's societal impact, trustworthy AI, and fairness in machine learning systems.</p><span class="opp-type gov-tag">Research Institute &middot; Canada</span></div></div>
+      <div class="funding-opp reveal"><div class="funding-opp-icon intl">🇪🇺</div><div><h4>EU Horizon Europe</h4><p>Follow-on grants from AIXPERT partnership. Trustworthy AI cluster calls for responsible & explainable systems.</p><span class="opp-type intl-tag">International &middot; EU</span></div></div>
+
+      <div class="funding-opp reveal"><div class="funding-opp-icon gov">🇺🇸</div><div><h4>NSF Responsible AI</h4><p>National Science Foundation programs for fairness, accountability, and transparency. US collaborators can serve as PI.</p><span class="opp-type gov-tag">Government &middot; USA</span></div></div>
+      <div class="funding-opp reveal"><div class="funding-opp-icon gov">🇨🇦</div><div><h4>Canada ISED / SRPC</h4><p>Federal funding for AI safety standards, regulation research, and responsible innovation programs.</p><span class="opp-type gov-tag">Government &middot; Canada</span></div></div>
+      <div class="funding-opp reveal"><div class="funding-opp-icon ind">🔬</div><div><h4>Google Research Scholar</h4><p>Supports early-career researchers in ML, AI safety, and responsible computing. Up to $60K USD.</p><span class="opp-type ind-tag">Industry &middot; Google</span></div></div>
+
+      <div class="funding-opp reveal"><div class="funding-opp-icon ind">🦊</div><div><h4>Mozilla Responsible AI Grants</h4><p>Funding for open-source, trustworthy AI projects. Great visibility and community alignment.</p><span class="opp-type ind-tag">Foundation &middot; Mozilla</span></div></div>
+      <div class="funding-opp reveal"><div class="funding-opp-icon intl">🤝</div><div><h4>Partnership on AI</h4><p>Collaboration and funding opportunities for responsible AI practices across industry and academia.</p><span class="opp-type intl-tag">Coalition &middot; Global</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH INTEGRITY & GOVERNANCE -->
+<section id="governance" style="padding: 60px 0 40px;">
+  <div class="container">
+    <div class="mission-card reveal">
+      <div class="section-tag" style="justify-content: center;">Research Integrity</div>
+      <h2 style="font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -1px; text-align: center; margin-bottom: 20px; position: relative;">Conflict of Interest <span class="gradient-text">& Governance Policy</span></h2>
+      <p style="color: var(--text-dim); font-size: 0.95rem; max-width: 760px; margin: 0 auto 28px; text-align: center; line-height: 1.8; position: relative;">SRLab is committed to the highest standards of research integrity and transparency. As a Canadian non-profit, we maintain clear boundaries between our mission and the external institutional affiliations of our team members.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; position: relative;">
+        <div style="background: rgba(0,229,160,0.04); border: 1px solid rgba(0,229,160,0.12); border-radius: 12px; padding: 24px;">
+          <h4 style="font-size: 0.92rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;"><span style="color: var(--accent);">⚖️</span> Disclosure of Affiliations</h4>
+          <p style="color: var(--text-dim); font-size: 0.82rem; line-height: 1.65;">All team members' external affiliations (academic, institutional, or industry) are disclosed publicly on this website. Work conducted at other institutions is clearly attributed to those institutions.</p>
+        </div>
+        <div style="background: rgba(0,184,255,0.04); border: 1px solid rgba(0,184,255,0.12); border-radius: 12px; padding: 24px;">
+          <h4 style="font-size: 0.92rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;"><span style="color: var(--accent2);">🔒</span> IP & Resource Boundaries</h4>
+          <p style="color: var(--text-dim); font-size: 0.82rem; line-height: 1.65;">SRLab-funded work and externally-funded work are kept separate. No SRLab resources, data, or funding are used for members' external institutional projects, and vice versa.</p>
+        </div>
+        <div style="background: rgba(124,92,252,0.04); border: 1px solid rgba(124,92,252,0.12); border-radius: 12px; padding: 24px;">
+          <h4 style="font-size: 0.92rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;"><span style="color: #7c5cfc;">📋</span> COI Review Process</h4>
+          <p style="color: var(--text-dim); font-size: 0.82rem; line-height: 1.65;">Before any grant submission or partnership engagement, potential conflicts of interest are reviewed internally. Team members recuse themselves from decisions where a conflict may arise.</p>
+        </div>
+        <div style="background: rgba(218,165,32,0.04); border: 1px solid rgba(218,165,32,0.12); border-radius: 12px; padding: 24px;">
+          <h4 style="font-size: 0.92rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;"><span style="color: #daa520;">🏛️</span> Non-Profit Governance</h4>
+          <p style="color: var(--text-dim); font-size: 0.82rem; line-height: 1.65;">As a Canadian registered non-profit (Corp. No. 1697413-9), SRLab operates under the Canada Not-for-profit Corporations Act with fiduciary duties, annual reporting, and public benefit obligations.</p>
+        </div>
+      </div>
+      <p style="color: var(--text-dim); font-size: 0.78rem; max-width: 700px; margin: 24px auto 0; text-align: center; line-height: 1.7; position: relative; font-family: var(--font-code);">For questions about our governance practices, COI policies, or institutional affiliations, please contact <a href="javascript:void(0)" onclick="window.location.href='mailto:contact@srlab.ai'" style="color: var(--accent); text-decoration: none;">contact@srlab.ai</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT CTA -->
+<section id="contact" class="funding-section">
+  <div class="container">
+    <div class="funding-card reveal">
+      <div class="section-tag" style="justify-content: center;">Let's Build Together</div>
+      <h2>Interested in <span class="gradient-text">Funding or Collaborating</span>?</h2>
+      <p>We're actively seeking grants, institutional partnerships, and industry sponsors to scale our responsible AI benchmarks and governance tools. If you share our vision for trustworthy, human-centered AI — let's talk.</p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+      
+        <a href="javascript:void(0)" onclick="window.location.href='mailto:contact@srlab.ai'" class="btn btn-primary">
+          <span>Get in Touch</span><span>&rarr;</span>
+        </a>
+      </div>
+      <div class="funding-badges">
+        <div class="badge"><div class="badge-icon">✓</div><span>EU Horizon Partner</span></div>
+        <div class="badge"><div class="badge-icon">✓</div><span>CIHR Award Holder</span></div>
+        <div class="badge"><div class="badge-icon">✓</div><span>100+ Peer-Reviewed Papers</span></div>
+        <div class="badge"><div class="badge-icon">✓</div><span>Open Source Benchmarks</span></div>
+        <div class="badge"><div class="badge-icon">✓</div><span>Top 2% Scientists</span></div>
+        <div class="badge"><div class="badge-icon">✓</div><span>Canadian Non-Profit</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-left">
+        <a href="#" class="logo">
+          <svg class="logo-svg" viewBox="0 0 120 128" xmlns="http://www.w3.org/2000/svg" style="height:32px;">
+            <defs><linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00e5a0"/><stop offset="100%" stop-color="#00b8ff"/></linearGradient></defs>
+            <polygon points="60,4 112,34 112,94 60,124 8,94 8,34" fill="none" stroke="url(#lg2)" stroke-width="3" stroke-linejoin="round"/>
+            <polygon points="60,18 100,42 100,86 60,110 20,86 20,42" fill="none" stroke="url(#lg2)" stroke-width="0.8" opacity="0.25"/>
+            <text font-family="'Outfit',sans-serif" font-size="44" font-weight="800" fill="url(#lg2)" text-anchor="middle" x="60" y="78" letter-spacing="-2">SR</text>
+          </svg>
+          <div class="logo-text"><span class="name">SRLab</span><span class="sub">Responsible AI</span></div>
+        </a>
+        <p>Scientific Research Laboratory for Responsible AI</p>
+        <p style="font-size: 0.72rem; color: var(--accent); margin-top: 4px;">Canadian Registered Non-Profit Organization</p>
+        <p>&copy; 2026 SRLab. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="javascript:void(0)" onclick="window.location.href='mailto:contact@srlab.ai'">Email at <span class="__cf_email__" data-cfemail="27444849534644536754554b464509464e">[email&#160;protected]</span></contact></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

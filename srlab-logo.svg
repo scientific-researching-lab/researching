@@ -1,0 +1,19 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5a0"/>
+      <stop offset="100%" stop-color="#00b8ff"/>
+    </linearGradient>
+  </defs>
+  <!-- Dark background -->
+  <rect width="512" height="512" rx="64" fill="#06080c"/>
+  <!-- Outer hexagon -->
+  <polygon points="256,52 432,154 432,358 256,460 80,358 80,154" 
+           fill="none" stroke="url(#g)" stroke-width="8" stroke-linejoin="round"/>
+  <!-- Inner hexagon -->
+  <polygon points="256,100 396,182 396,346 256,428 116,346 116,182" 
+           fill="none" stroke="url(#g)" stroke-width="2" opacity="0.2"/>
+  <!-- SR text -->
+  <text font-family="'Outfit','Helvetica Neue',Arial,sans-serif" font-size="160" font-weight="800" 
+        fill="url(#g)" text-anchor="middle" x="256" y="290" letter-spacing="-8">SR</text>
+</svg>
