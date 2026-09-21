@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRLab | Scientific Research-AI Lab</title>
+<meta name="description" content="SRLab is a Canadian not-for-profit research laboratory in Ontario. We study how AI systems fail people and build open benchmarks, tools, and governance methods to make them fairer and more accountable.">
+<meta name="theme-color" content="#1f3a5f">
+<link rel="icon" type="image/svg+xml" href="srlab-logo.svg">
+<meta property="og:title" content="SRLab | Scientific Research-AI Lab">
+<meta property="og:description" content="Canadian not-for-profit research laboratory. Independent evaluation of AI systems: fairness, safety, agent governance, and environmental cost. Open tools, peer-reviewed research, and consulting.">
+<meta property="og:url" content="https://srlab.ai/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://srlab.ai/srlab-logo-horizontal.svg">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --paper: #fdfdfb; --ink: #1c1c1a; --ink-2: #4b4a46; --ink-3: #7a7873;
+  --navy: #1f3a5f; --maple: #a6192e;
+  --rule: #dcd9d1; --rule-soft: #ecebe6; --band: #f4f3ee;
+  --serif: 'Lora', Georgia, 'Times New Roman', serif;
+  --sans: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+  --measure: 66ch;
+}
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 1.0625rem; line-height: 1.7; }
+h1, h2, h3, .wordmark, .lead, .intro p { font-family: var(--serif); }
+a { color: var(--navy); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--maple); }
+a:focus-visible { outline: 2px solid var(--maple); outline-offset: 3px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+p { max-width: var(--measure); }
+h1, h2, h3 { font-weight: 500; line-height: 1.15; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.2rem; }
+
+header { border-bottom: 1px solid var(--rule); padding: 22px 0; }
+header .wrap { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.wordmark { text-decoration: none; color: var(--ink); font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; }
+.wordmark small { display: block; font-family: var(--sans); font-family: var(--sans); font-size: 0.85rem; font-weight: 400; color: var(--ink-3); margin-top: 2px; }
+.wordmark:hover { color: var(--ink); }
+nav ul { list-style: none; display: flex; gap: 22px; flex-wrap: wrap; font-family: var(--sans); font-size: 0.95rem; }
+nav a { text-decoration: none; color: var(--ink-2); }
+nav a:hover { color: var(--maple); text-decoration: underline; }
+
+.intro { padding: 72px 0 56px; border-bottom: 1px solid var(--rule); }
+.intro h1 { font-size: clamp(2rem, 4.2vw, 3.1rem); max-width: 22ch; margin-bottom: 26px; }
+.intro p { font-size: 1.2rem; color: var(--ink-2); max-width: 58ch; }
+.intro p + p { margin-top: 16px; }
+.facts { margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px 32px; font-family: var(--sans); font-size: 0.95rem; max-width: 900px; border-top: 1px solid var(--rule); padding-top: 22px; }
+.facts dt { color: var(--ink-3); }
+.facts dd { color: var(--ink); }
+
+section { padding: 64px 0; border-bottom: 1px solid var(--rule); }
+section:last-of-type { border-bottom: 0; }
+.cols { display: grid; grid-template-columns: 230px 1fr; gap: 40px; }
+.cols > h2 { position: sticky; top: 24px; align-self: start; padding-right: 20px; }
+.cols > h2::after { content: ''; display: block; width: 36px; height: 2px; background: var(--maple); margin-top: 14px; }
+.body > * + * { margin-top: 20px; }
+.body > h3 { margin-top: 40px; }
+.body > h3:first-child { margin-top: 0; }
+.lead { font-size: 1.2rem; }
+.note { font-family: var(--sans); font-size: 0.95rem; color: var(--ink-2); }
+
+.rows { list-style: none; }
+.rows li { padding: 18px 0; border-top: 1px solid var(--rule-soft); }
+.rows li:first-child { border-top: 0; padding-top: 0; }
+.rows h3 { font-size: 1.15rem; }
+.rows p { margin-top: 6px; color: var(--ink-2); font-size: 1rem; }
+.rows .links { margin-top: 8px; font-family: var(--sans); font-size: 0.92rem; }
+.rows .links a { margin-right: 18px; }
+.status { font-family: var(--sans); font-size: 0.85rem; color: var(--ink-3); margin-left: 8px; font-weight: 400; }
+
+.people { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 26px 36px; }
+.people li h3 { font-size: 1.15rem; }
+.people .role { font-family: var(--sans); font-size: 0.9rem; color: var(--maple); margin-top: 2px; }
+.people li p { font-size: 1rem; color: var(--ink-2); margin-top: 6px; }
+
+.pubs { list-style: none; counter-reset: pub; }
+.pubs li { padding: 14px 0 14px 40px; position: relative; border-top: 1px solid var(--rule-soft); font-size: 1rem; }
+.pubs li:first-child { border-top: 0; }
+.pubs li::before { counter-increment: pub; content: counter(pub) "."; position: absolute; left: 0; top: 14px; color: var(--ink-3); font-family: var(--sans); font-size: 0.95rem; }
+.pubs .venue { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-2); display: block; margin-top: 3px; }
+
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 28px; }
+.groups h3 { font-size: 1.05rem; margin-bottom: 8px; }
+.groups ul { list-style: none; font-family: var(--sans); font-size: 0.95rem; color: var(--ink-2); line-height: 1.7; }
+
+.band { background: var(--band); }
+.contact address { font-style: normal; margin-top: 20px; font-family: var(--sans); font-size: 1rem; line-height: 1.7; }
+
+footer { padding: 36px 0 48px; font-family: var(--sans); font-size: 0.9rem; color: var(--ink-3); border-top: 1px solid var(--rule); }
+footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  body { font-size: 1.05rem; }
+  .cols { grid-template-columns: 1fr; gap: 20px; }
+  .cols > h2 { position: static; }
+  section { padding: 48px 0; }
+  .intro { padding: 48px 0 40px; }
+}
+
+.cards { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 22px; }
+.cards li { background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 22px 20px 18px; display: flex; flex-direction: column; }
+.cards .icon { width: 40px; height: 40px; color: var(--navy); margin-bottom: 14px; }
+.cards .icon svg { width: 100%; height: 100%; }
+.cards h3 { font-size: 1.1rem; }
+.cards .tag { display: inline-block; font-family: var(--sans); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--maple); margin-left: 8px; vertical-align: middle; }
+.cards p { font-size: 0.95rem; color: var(--ink-2); margin-top: 8px; flex: 1; }
+.cards .links { margin-top: 12px; font-family: var(--sans); font-size: 0.9rem; }
+.cards .links a { margin-right: 14px; }
+.body > .pubs + h3 { margin-top: 36px; }
+.talks { list-style: none; }
+.talks li { display: grid; grid-template-columns: 90px 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--rule-soft); font-size: 1rem; }
+.talks li:first-child { border-top: 0; }
+.talks .when { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-3); }
+.talks strong { font-weight: 700; font-family: var(--sans); font-size: 0.95rem; }
+
+/* business polish */
+header { position: sticky; top: 0; z-index: 10; background: rgba(253,253,251,0.94); backdrop-filter: blur(6px); }
+header .wrap { align-items: center; }
+nav ul { align-items: center; }
+nav .cta { background: var(--navy); color: #fff; padding: 8px 16px; border-radius: 4px; font-weight: 700; }
+nav .cta:hover { background: var(--maple); color: #fff; text-decoration: none; }
+.intro { padding: 80px 0 0; border-bottom: 0; }
+.intro .grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: start; }
+.intro .eyebrow { font-family: var(--sans); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--maple); margin-bottom: 18px; }
+.btns { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 30px; font-family: var(--sans); }
+.btn { display: inline-block; padding: 12px 22px; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 0.98rem; border: 1.5px solid var(--navy); color: var(--navy); }
+.btn.primary { background: var(--navy); color: #fff; }
+.btn:hover { background: var(--maple); border-color: var(--maple); color: #fff; }
+.pillars { list-style: none; border-left: 2px solid var(--maple); padding-left: 22px; font-family: var(--sans); font-size: 0.98rem; color: var(--ink-2); margin-top: 8px; }
+.pillars li + li { margin-top: 14px; }
+.pillars strong { color: var(--ink); display: block; font-size: 1.02rem; }
+.stats { margin-top: 56px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--band); }
+.stats .wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.stats div { padding: 26px 20px 24px 0; }
+.stats div + div { padding-left: 28px; border-left: 1px solid var(--rule); }
+.stats b { display: block; font-family: var(--serif); font-size: 2rem; font-weight: 600; color: var(--navy); line-height: 1; }
+.stats span { font-family: var(--sans); font-size: 0.88rem; color: var(--ink-2); display: block; margin-top: 8px; }
+.facts { margin-top: 0; border-top: 0; padding: 28px 0 32px; border-bottom: 1px solid var(--rule); font-size: 0.88rem; }
+.cards li { transition: transform .15s ease, box-shadow .15s ease; border-top: 3px solid var(--navy); }
+.cards li:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(28,28,26,0.08); }
+.steps { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; counter-reset: step; margin-top: 8px; }
+.steps li { position: relative; padding-top: 44px; font-size: 0.98rem; color: var(--ink-2); }
+.steps li::before { counter-increment: step; content: counter(step); position: absolute; top: 0; left: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--maple); color: #fff; font-family: var(--sans); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+.steps strong { display: block; color: var(--ink); font-family: var(--serif); font-size: 1.1rem; font-weight: 500; margin-bottom: 6px; }
+.values { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+.values li { border-top: 2px solid var(--maple); padding-top: 14px; font-size: 0.98rem; color: var(--ink-2); }
+.values strong { display: block; font-family: var(--serif); font-size: 1.1rem; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.contact-cta { background: var(--navy); color: #fff; border-radius: 6px; padding: 32px 36px; margin-top: 28px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.contact-cta p { color: #fff; font-family: var(--serif); font-size: 1.25rem; margin: 0; max-width: 40ch; }
+.contact-cta .btn { background: #fff; color: var(--navy); border-color: #fff; }
+.contact-cta .btn:hover { background: var(--maple); color: #fff; border-color: var(--maple); }
+footer { background: var(--ink); color: #b8b6ae; border-top: 0; padding: 44px 0 52px; }
+footer a { color: #fff; }
+footer .wrap { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; }
+footer h4 { font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; margin-bottom: 10px; }
+footer ul { list-style: none; line-height: 1.9; }
+footer .fine { margin-top: 18px; font-size: 0.82rem; }
+@media (max-width: 760px) {
+  .intro .grid { grid-template-columns: 1fr; gap: 28px; }
+  .stats div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+  footer .wrap { grid-template-columns: 1fr; }
+  nav ul { gap: 14px; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="#top" class="wordmark">SRLab<small>Scientific Research-AI Lab</small></a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#consulting">Consulting</a></li>
+        <li><a href="#papers">Papers</a></li>
+        <li><a href="#talks">Talks</a></li>
+        <li><a href="#people">People</a></li>
+        <li><a href="#equity">Equity</a></li>
+        <li><a href="#governance">Governance</a></li>
+        <li><a href="#contact" class="cta">Work with us</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<div class="intro">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <div class="eyebrow">Independent AI evaluation, Canada</div>
+        <h1>We study how AI systems fail people, and build the evidence to fix them.</h1>
+        <p>SRLab is a registered not-for-profit research laboratory based in Canada. We test language, vision, and agentic AI systems for fairness, safety, and accountability, and we publish what we find: benchmarks, datasets, software, and peer-reviewed research that others can inspect, reuse, and challenge.</p>
+        <div class="btns">
+          <a class="btn primary" href="#consulting">Work with us</a>
+          <a class="btn" href="#tools">Explore our tools</a>
+        </div>
+      </div>
+      <ul class="pillars">
+        <li><strong>Fairness and bias</strong>Benchmarks and detectors for text, image, audio, and video models, reported by demographic group.</li>
+        <li><strong>Agent evaluation and governance</strong>Trajectory-level evaluation, transparency records, and trust, risk, and security management for AI agents.</li>
+        <li><strong>Synthetic media and deception</strong>Disinformation and deepfake detection, and models that resist repeating known falsehoods.</li>
+        <li><strong>Environmental cost of AI</strong>Carbon, energy, and water accounting across model lineages, with public dashboards.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="wrap">
+      <div><b>12</b><span>public tools, benchmarks, and demonstrators</span></div>
+      <div><b>3K+</b><span>citations across the lab's peer-reviewed work</span></div>
+      <div><b>50+</b><span>papers at NeurIPS, ICML, ACL, EMNLP, AAAI, and in ACM Computing Surveys and Information Fusion</span></div>
+      <div><b>14</b><span>keynotes, panels, and invited talks since 2023</span></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <dl class="facts">
+      <div><dt>Legal name</dt><dd>Scientific Research-AI Lab, operating as SRLab</dd></div>
+      <div><dt>Legal form</dt><dd>Not-for-profit corporation, Canada Not-for-profit Corporations Act, 2025</dd></div>
+      <div><dt>Corporation number</dt><dd>1697413-9</dd></div>
+      <div><dt>Contact</dt><dd><a href="mailto:contact@srlab.ai">contact@srlab.ai</a></dd></div>
+    </dl>
+  </div>
+</div>
+
+<section id="about">
+  <div class="wrap cols">
+    <h2>About the lab</h2>
+    <div class="body">
+      <p class="lead">SRLab was founded in 2025 and incorporated under the Canada Not-for-profit Corporations Act. The research programme is led by the lab's Research Director and carried out with a small group of scientists, graduate students, and interns from partner institutions in Canada, the United States, and Europe.</p>
+      <p>Our earliest work was on bias in news text, published at AAAI and ACM AIES and released as open-source software that is still in use. From there the lab grew into multimodal fairness benchmarks, safety evaluation for language models, and, most recently, the governance and evaluation of AI agents. Our work is supported through the EU Horizon Europe programme and through collaborations with Canada's principal AI and health research bodies.</p>
+      <h3>Recent</h3>
+      <ul class="rows">
+        <li><p><span class="status">September 2026</span> Keynote at the <a href="https://sites.google.com/uniroma1.it/green-ai-workshop/editions/ecml-pkdd-2026" target="_blank" rel="noopener">GREEN-AI Workshop at ECML-PKDD 2026</a> in Naples on Data and Impact Accounting, our ICML 2026 spotlight position paper.</p></li>
+        <li><p><span class="status">September 2026</span> Proposed a half-day workshop, The Hidden Compute Cost of AI Safety Evaluation, for IASEAI 2027, building on our Data and Impact Accounting work.</p></li>
+        <li><p><span class="status">June 2026</span> unbias-plus demonstrated to the Prime Minister of Canada during a visit to the Vector Institute.</p></li>
+        <li><p><span class="status">June 2026</span> Presented HumaniBench and SONIC-O1 in the UNLOCK benchmarking session at HAICON 2026, Helmholtz Munich.</p></li>
+        <li><p><span class="status">January 2026</span> F-DPO accepted at ACL 2026 Findings; SONIC-O1 released; VLDBench published in Information Fusion; TRiSM for agentic AI published in AI Open.</p></li>
+        <li><p><span class="status">January 2026</span> AI governance panel at AAAI 2026 in Singapore alongside researchers from IBM, Google DeepMind, and Microsoft.</p></li>
+        <li><p><span class="status">October 2025</span> Six acceptances at NeurIPS 2025 across fairness, sustainability, and agent safety; keynote at IEEE SMC 2025.</p></li>
+      </ul>
+      <h3>Recognition</h3>
+      <ul class="rows">
+        <li><p>Responsible AI Leader of the Year, Women in AI Summit and Awards 2025 (North America).</p></li>
+        <li><p>The Peak's Emerging Leaders 2026 in artificial intelligence (Canada).</p></li>
+        <li><p>Stanford/Elsevier list of the world's top 2% most-cited scientists, 2024 and 2025.</p></li>
+        <li><p>CIHR Health System Impact Fellowship and AI4PH award, for responsible AI in health equity and public health.</p></li>
+        <li><p>Co-applicant on AIXPERT, one of three projects selected from 137 proposals under Horizon Europe's trustworthy AI call.</p></li>
+        <li><p>Editorial and review service: reviewer for Nature and Nature Machine Intelligence; editorial board of Springer Discover Computing; NeurIPS main-track programme committee; CIHR and Killam peer-review committees.</p></li>
+      </ul>
+      <h3>How we work</h3>
+      <ul class="values">
+        <li><strong>We release what we build</strong>Benchmarks, datasets, and code are published under open licences so that results can be reproduced and criticised.</li>
+        <li><strong>We keep clear boundaries</strong>Members hold positions at other institutions; work done there is attributed there, and lab resources are not mixed with external projects.</li>
+        <li><strong>We prefer measured claims</strong>Much of our research asks whether AI evaluations mean what they appear to mean. We hold our own findings to the same standard.</li>
+      </ul>
+      <h3>Where we would like to go</h3>
+      <p>Over the next few years we want to grow from a volunteer-led lab into a stable Canadian research organisation with funded positions for early-career researchers, particularly on the evaluation science of agentic AI, synthetic-media forensics, and the environmental cost of AI systems. We are seeking public, philanthropic, and industry partners who share that aim.</p>
+    </div>
+  </div>
+</section>
+
+<section id="tools" class="band">
+  <div class="wrap cols">
+    <h2>Tools and proofs of concept</h2>
+    <div class="body">
+      <p class="lead">Software, benchmarks, and demonstrators we build and maintain. Everything here is public and free for research use.</p>
+      <ul class="cards">
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>unbias-plus<span class="tag">Tool</span></h3>
+          <p>Bias detection and rewriting toolkit built on a fine-tuned Qwen3-4B. Classifies bias type and severity, locates biased spans, and returns a neutral rewrite in one structured output. Demonstrated to the Prime Minister of Canada in June 2026.</p>
+          <div class="links"><a href="https://pypi.org/project/unbias-plus/" target="_blank" rel="noopener">PyPI</a><a href="https://vectorinstitute.github.io/unbias-plus/" target="_blank" rel="noopener">Documentation</a><a href="https://huggingface.co/collections/vector-institute/newsmediabias-plus-6713b5d93f36e628d64665f0" target="_blank" rel="noopener">Models</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="2"/><circle cx="9" cy="13" r="1.3"/><circle cx="15" cy="13" r="1.3"/><path d="M12 3v4M8 19v2M16 19v2"/></svg></div>
+          <h3>FairSense-AgentiX<span class="tag">Proof of concept</span></h3>
+          <p>Agentic fairness and risk analysis platform: ReAct reasoning loops, dynamic tool selection, and self-critique over text, images, and datasets. FastAPI backend with streaming and a React front end.</p>
+          <div class="links"><a href="https://vectorinstitute.github.io/fairsense-agentix/" target="_blank" rel="noopener">Project page</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l2 2M20 4l-2 2"/></svg></div>
+          <h3>FairSense-AI<span class="tag">Tool</span></h3>
+          <p>Toolkit for bias auditing, emissions reporting, and explainability across large-scale AI systems, with responsible-AI compliance checks.</p>
+          <div class="links"><a href="https://vectorinstitute.github.io/FairSense-AI/" target="_blank" rel="noopener">Project page</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h2l2-5 3 10 3-8 2 5 2-2h4"/></svg></div>
+          <h3>SONIC-O1<span class="tag">Benchmark</span></h3>
+          <p>Human-verified benchmark for audio-video understanding: 231 videos, about 60 hours, 4,958 questions across 13 domains, with results reported by demographic group. Public leaderboard.</p>
+          <div class="links"><a href="https://vectorinstitute.github.io/sonic-o1/" target="_blank" rel="noopener">Project page</a><a href="https://huggingface.co/datasets/vector-institute/sonic-o1" target="_blank" rel="noopener">Dataset</a><a href="https://huggingface.co/spaces/vector-institute/sonic-o1-leaderboard" target="_blank" rel="noopener">Leaderboard</a><a href="https://arxiv.org/abs/2601.21666" target="_blank" rel="noopener">Paper</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M15 19c0-2 2-4 5-4"/></svg></div>
+          <h3>HumaniBench<span class="tag">Benchmark</span></h3>
+          <p>Human-centred benchmark for large multimodal models organised around seven principles, including fairness, empathy, robustness, and multilingual ability. Presented at HAICON 2026.</p>
+          <div class="links"><a href="https://arxiv.org/abs/2505.11454" target="_blank" rel="noopener">Paper</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7l9 9-7 7-9-9z"/><circle cx="8" cy="8" r="1.3"/></svg></div>
+          <h3>VLDBench<span class="tag">Benchmark</span></h3>
+          <p>Benchmark for multimodal disinformation detection with regulatory alignment. Published in Information Fusion (2026).</p>
+          <div class="links"><a href="https://vectorinstitute.github.io/VLDBench/" target="_blank" rel="noopener">Project page</a><a href="https://doi.org/10.1016/j.inffus.2025.104092" target="_blank" rel="noopener">Paper</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l8-8"/></svg></div>
+          <h3>Data and Impact Accounting (DIA)<span class="tag">Tool</span></h3>
+          <p>Tracks the cumulative carbon and water footprint of open-source models and their derivatives, with a public dashboard. ICML 2026 spotlight position paper; keynote at GREEN-AI, ECML-PKDD 2026.</p>
+          <div class="links"><a href="https://vectorinstitute.github.io/ai-impact-accounting/" target="_blank" rel="noopener">Dashboard</a><a href="https://arxiv.org/abs/2601.21632" target="_blank" rel="noopener">Paper</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/></svg></div>
+          <h3>Educational visualisers<span class="tag">Proof of concept</span></h3>
+          <p>Interactive teaching tools accepted to the NeurIPS 2025 Educational Program: the climate cost of AI expressed in human-scale equivalents, and model immunisation, prompt-injection defence, and red-teaming explained through the vaccine analogy.</p>
+          <div class="links"><a href="https://neurips-co2-viz.vercel.app" target="_blank" rel="noopener">From Data to CO&#8322;</a><a href="https://ai-vaccines.vercel.app" target="_blank" rel="noopener">How AI vaccines work</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-6 1 1 2 2 3 2 0-2 0-4 0-6z"/></svg></div>
+          <h3>GreenBench<span class="tag">Benchmark</span></h3>
+          <p>Benchmark for the energy footprint of AI models across training and inference settings.</p>
+          <div class="links"><a href="https://arxiv.org/abs/2503.02865" target="_blank" rel="noopener">Paper</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h5a4 4 0 0 0 0-8H11a4 4 0 0 1 0-8h5"/></svg></div>
+          <h3>Agentic transparency<span class="tag">Framework</span></h3>
+          <p>Survey and framework for recording what an agent did and why, with the Minimal Explanation Packet as an audit-ready record at the end of each task.</p>
+          <div class="links"><a href="https://vectorinstitute.github.io/Agentic-Transparency/" target="_blank" rel="noopener">Project page</a><a href="https://engrxiv.org/preprint/view/6451" target="_blank" rel="noopener">Paper</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+          <h3>Responsible agentic reasoning (R&sup2;A&sup2;)<span class="tag">Proof of concept</span></h3>
+          <p>Agents that carry fairness, privacy, and auditability checks through each reasoning step rather than only at the final output.</p>
+          <div class="links"><a href="https://www.techrxiv.org/doi/full/10.36227/techrxiv.175735299.97215847" target="_blank" rel="noopener">Paper</a><a href="https://github.com/shainarazavi/Responsible-reasoning-agents" target="_blank" rel="noopener">Code</a></div>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h14M5 10h14M5 14h9M5 18h6"/><path d="M17 15l3 3-3 3"/></svg></div>
+          <h3>Dbias, NBias, and GUS-Net<span class="tag">Tool</span></h3>
+          <p>Earlier bias-detection releases: a configurable pipeline for news text (Dbias), token-level bias entities (NBias), and span-level generalisation, unfairness, and stereotype tagging (GUS-Net).</p>
+          <div class="links"><a href="https://pypi.org/project/Dbias/" target="_blank" rel="noopener">Dbias on PyPI</a><a href="https://github.com/dreji18/Fairness-in-AI" target="_blank" rel="noopener">Dbias code</a><a href="https://huggingface.co/collections/ethical-spectacle/gus-net-social-bias-ner-66edfe93801ea45d7a26a10f" target="_blank" rel="noopener">GUS-Net models</a></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="consulting">
+  <div class="wrap cols">
+    <h2>Consulting</h2>
+    <div class="body">
+      <p class="lead">We work with companies, public bodies, and other research organisations that need an independent assessment of how their AI systems behave. Engagements are scoped in writing, staffed by lab scientists, and priced to cover costs; any surplus funds the lab's research programme and student placements.</p>
+      <ul class="cards">
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h12l4 4v10H4z"/><path d="M16 5v4h4"/><path d="M8 13h8M8 17h5"/></svg></div>
+          <h3>Independent AI audits</h3>
+          <p>Evaluation of a deployed or pre-deployment AI system against fairness, safety, robustness, and factuality criteria, using our own benchmarks and tooling. You receive a written report with reproducible evidence, not a certificate.</p>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M5 20h14"/><path d="M4 9h16"/><path d="M6 9l-3 6a3 3 0 0 0 6 0zM18 9l-3 6a3 3 0 0 0 6 0z"/></svg></div>
+          <h3>Bias and fairness assessment</h3>
+          <p>Measurement of demographic and linguistic bias in language, vision, and multimodal models, including hiring, content moderation, health, and news applications. Results reported by group, with recommended mitigations.</p>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="2"/><circle cx="9" cy="13" r="1.3"/><circle cx="15" cy="13" r="1.3"/><path d="M12 3v4M8 19v2M16 19v2"/></svg></div>
+          <h3>Agentic AI governance</h3>
+          <p>Design review of agent systems: trajectory logging, tool-use controls, transparency records, and trust, risk, and security management, drawing on our TRiSM and Minimal Explanation Packet frameworks.</p>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l8-8"/></svg></div>
+          <h3>Environmental footprint accounting</h3>
+          <p>Carbon, energy, and water accounting for training, fine-tuning, and inference workloads, aligned with emerging EU AI Act reporting expectations, using Data and Impact Accounting.</p>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5z"/></svg></div>
+          <h3>Regulatory and policy readiness</h3>
+          <p>Gap analysis against the EU AI Act, Canadian AI guidance, and sector standards, with a prioritised plan for documentation, testing, and disclosure.</p>
+        </li>
+        <li>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h12"/><path d="M9 7h6"/></svg></div>
+          <h3>Training and workshops</h3>
+          <p>Half-day to multi-day sessions for engineering, product, policy, and executive teams on responsible AI evaluation, bias detection, agent safety, and sustainable AI practice.</p>
+        </li>
+      </ul>
+      <h3>How an engagement works</h3>
+      <ol class="steps">
+        <li><strong>Scope</strong>A short call, then a written scope with questions, systems in view, data access, timeline, and cost. Typical engagements run from a two-week assessment to a multi-month programme.</li>
+        <li><strong>Assess</strong>Lab scientists run the evaluation using our benchmarks and tooling, with interim findings shared as they emerge.</li>
+        <li><strong>Report</strong>A written report with reproducible evidence and prioritised recommendations, plus a walkthrough for your team. We do not accept work that requires us to withhold findings from the people affected by a system.</li>
+      </ol>
+      <div class="btns"><a class="btn primary" href="mailto:contact@srlab.ai?subject=Consulting%20enquiry">Start a conversation</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="papers" class="band">
+  <div class="wrap cols">
+    <h2>Papers</h2>
+    <div class="body">
+      <p class="lead">Our work falls into four themes: fairness and bias in text and multimodal models; evaluation and governance of AI agents; synthetic media and deception; and the environmental cost of AI. A selection is below; work under anonymous review is not listed until it is accepted. Full lists are on Google Scholar under each author.</p>
+      <h3>Agents: evaluation and governance</h3>
+      <ol class="pubs">
+        <li><a href="https://zenodo.org/records/17580624" target="_blank" rel="noopener">Evaluating and regulating agentic AI: a study of benchmarks, metrics, and regulation.</a><span class="venue">Farooq, Raza et al., Emmanouilidis. Information Fusion, 2026.</span></li>
+        <li><a href="https://doi.org/10.1016/j.aiopen.2026.02.006" target="_blank" rel="noopener">TRiSM for agentic AI: a review of trust, risk, and security management in LLM-based agentic multi-agent systems.</a><span class="venue">Raza, Sapkota, Karkee, Emmanouilidis. AI Open, 2026.</span></li>
+        <li><a href="https://engrxiv.org/preprint/view/6451" target="_blank" rel="noopener">Transparency in agentic AI: a survey of interpretability, explainability, and governance.</a><span class="venue">Raza, Radwan, Chaduvula, Alinoori, Emmanouilidis. Preprint, 2026.</span></li>
+        <li><a href="https://arxiv.org/abs/2602.06841" target="_blank" rel="noopener">From features to actions: explainability in traditional and agentic AI systems.</a><span class="venue">Chaduvula, Ho, Kim, Narayanan, Alinoori, Garg, Ramachandram, Raza. Preprint, 2026.</span></li>
+        <li><a href="https://arxiv.org/abs/2502.08650" target="_blank" rel="noopener">Who is responsible? The data, models, users or regulations? A comprehensive survey on responsible generative AI for a sustainable future.</a><span class="venue">Raza, Qureshi, Zahid et al. ACM Computing Surveys, 2025.</span></li>
+        <li><a href="https://link.springer.com/article/10.1007/s10994-025-06767-4" target="_blank" rel="noopener">Developing safe and responsible large language models.</a><span class="venue">Raza, Bashir et al. Machine Learning, 2025.</span></li>
+      </ol>
+
+      <h3>Fairness and bias</h3>
+      <ol class="pubs">
+        <li><a href="https://arxiv.org/abs/2601.21666" target="_blank" rel="noopener">SONIC-O1: a real-world benchmark for evaluating multimodal LLMs on audio-video understanding.</a><span class="venue">Radwan, Emmanouilidis, Tabassum, Pandya, Raza. 2026.</span></li>
+        <li><a href="https://arxiv.org/abs/2505.11454" target="_blank" rel="noopener">HumaniBench: a human-centric framework for large multimodal models evaluation.</a><span class="venue">Raza et al. NeurIPS 2025 poster; under revision for ACM TIST.</span></li>
+        <li><a href="https://arxiv.org/abs/2508.03199" target="_blank" rel="noopener">Beyond content: how grammatical gender shapes visual representation in text-to-image models.</a><span class="venue">Raza et al. EMNLP 2025 Findings.</span></li>
+        <li><a href="https://arxiv.org/abs/2507.07274" target="_blank" rel="noopener">Social bias detection in vision-language models.</a><span class="venue">Raza et al. ASONAM 2025.</span></li>
+        <li><a href="https://doi.org/10.1016/j.nlp.2025.100126" target="_blank" rel="noopener">RESPECT: a framework for promoting inclusive and respectful conversations in online communications.</a><span class="venue">Raza et al. Natural Language Processing Journal, 2025.</span></li>
+        <li><a href="https://arxiv.org/abs/2405.11290" target="_blank" rel="noopener">MBIAS: mitigating bias in large language models while retaining context.</a><span class="venue">Raza, Raval, Chatrath. ACL 2024 WASSA workshop.</span></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0957417423020444" target="_blank" rel="noopener">NBIAS: a natural language processing framework for bias identification in text.</a><span class="venue">Raza et al. Expert Systems with Applications, 2023.</span></li>
+      </ol>
+
+      <h3>Synthetic media and deception</h3>
+      <ol class="pubs">
+        <li><a href="https://doi.org/10.1016/j.inffus.2025.104092" target="_blank" rel="noopener">VLDBench: evaluating multimodal disinformation with regulatory alignment.</a><span class="venue">Raza, Bashir, Emmanouilidis, Shah et al. Information Fusion, 2026.</span></li>
+        <li><a href="https://arxiv.org/abs/2601.03027" target="_blank" rel="noopener">F-DPO: reducing hallucinations in LLMs via factuality-aware preference learning.</a><span class="venue">Raza et al. ACL 2026 Findings.</span></li>
+        <li><a href="https://arxiv.org/abs/2505.17870" target="_blank" rel="noopener">Just as humans need vaccines, so do models: model immunization to combat falsehoods.</a><span class="venue">Raza et al. IJCNN / IEEE WCCI, 2026.</span></li>
+        <li><a href="https://link.springer.com/article/10.1007/s13278-024-01290-1" target="_blank" rel="noopener">FakeWatch: a framework for detecting fake news to ensure credible elections.</a><span class="venue">Raza et al. Social Network Analysis and Mining, 2024.</span></li>
+        <li><a href="https://link.springer.com/article/10.1007/s41060-022-00359-4" target="_blank" rel="noopener">Fake news detection based on news content and social contexts: a transformer-based approach.</a><span class="venue">Raza, Ding. International Journal of Data Science and Analytics, 2022.</span></li>
+      </ol>
+
+      <h3>Environmental cost of AI</h3>
+      <ol class="pubs">
+        <li><a href="https://arxiv.org/abs/2601.21632" target="_blank" rel="noopener">Sustainable open-source AI requires tracking the cumulative footprint of derivatives.</a><span class="venue">Raza et al. ICML 2026, spotlight position paper.</span></li>
+        <li><a href="https://arxiv.org/abs/2503.02865" target="_blank" rel="noopener">Benchmarking energy footprints of AI models.</a><span class="venue">Raza et al. Preprint, 2025.</span></li>
+      </ol>
+
+      <h3>Recommender systems and applied work</h3>
+      <ol class="pubs">
+        <li><a href="https://doi.org/10.1145/3742421" target="_blank" rel="noopener">Review-based recommender systems: a survey of approaches, challenges and future perspectives.</a><span class="venue">Hasan, Rahman, Ding, Huang, Raza. ACM Computing Surveys, 2026.</span></li>
+        <li><a href="https://doi.org/10.1016/j.cosrev.2025.100849" target="_blank" rel="noopener">A comprehensive review of recommender systems: transitioning from theory to practice.</a><span class="venue">Raza et al. Computer Science Review, 2026.</span></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S1574013718302120" target="_blank" rel="noopener">Progress in context-aware recommender systems: an overview.</a><span class="venue">Raza, Ding. Computer Science Review, 2019.</span></li>
+        <li><a href="https://journals.plos.org/digitalhealth/article?id=10.1371/journal.pdig.0000152" target="_blank" rel="noopener">Large-scale biomedical named-entity recognition.</a><span class="venue">PLOS Digital Health, 2022.</span></li>
+        <li><a href="https://pubmed.ncbi.nlm.nih.gov/36560764/" target="_blank" rel="noopener">Clinical text mining for COVID-19 risk detection.</a><span class="venue">2022.</span></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S2542660521001050" target="_blank" rel="noopener">A jamming attack detection technique for opportunistic networks.</a><span class="venue">Singh, Woungang, Dhurandher, Khalid. Internet of Things, 2022.</span></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S2542660521000287" target="_blank" rel="noopener">Reinforcement learning-based fuzzy geocast routing protocol for opportunistic networks.</a><span class="venue">Khalid, Woungang, Dhurandher, Singh. Internet of Things, 2021.</span></li>
+      </ol>
+
+      <h3>In progress</h3>
+      <ul class="rows">
+        <li><h3>Reproducibility of bias-detection tools</h3><p>An audit of whether span-level bias detectors give the same verdict when the sampling seed, inference platform, or surrounding text changes.</p></li>
+        <li><h3>Harness-aware evaluation of agents</h3><p>A survey arguing that an agent's benchmark score belongs to the whole evaluation set-up (model, harness, environment, and evaluator), not the model alone.</p></li>
+        <li><h3>Deepfake forensics</h3><p>Audio-visual deepfake detection that generalises across generators: a survey, a trace-labelled forensic benchmark, and detection models that route on signal reliability.</p></li>
+        <li><h3>Does cheaper evaluation change the conclusion?</h3><p>Whether quantisation, batching, and benchmark reduction preserve conclusions about accuracy, fairness, and bias, and what each saves in energy and water.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="talks">
+  <div class="wrap cols">
+    <h2>Talks</h2>
+    <div class="body">
+      <p class="lead">Keynotes, panels, and invited talks by lab members. Invitations can be sent to <a href="mailto:contact@srlab.ai">contact@srlab.ai</a>.</p>
+      <ul class="talks">
+        <li><span class="when">Sep 2026</span><div><strong><a href="https://sites.google.com/uniroma1.it/green-ai-workshop/editions/ecml-pkdd-2026" target="_blank" rel="noopener">GREEN-AI Workshop, ECML-PKDD 2026</a>, Naples</strong><br>Sustainable open-source AI requires tracking the cumulative footprint of derivatives <span class="status">keynote</span></div></li>
+        <li><span class="when">Jun 2026</span><div><strong>HAICON 2026, Helmholtz Munich</strong><br>Current status of the benchmarking field: lessons learned (UNLOCK initiative)</div></li>
+        <li><span class="when">Jan 2026</span><div><strong>AI Governance Workshop, AAAI 2026, Singapore</strong><br>Panel on AI governance, safety, and responsible AI with IBM Research, Google DeepMind, and Microsoft Research</div></li>
+        <li><span class="when">Oct 2025</span><div><strong>IEEE SMC 2025</strong><br>Responsible AI and multimodal fairness <span class="status">keynote</span></div></li>
+        <li><span class="when">Oct 2025</span><div><strong>AI Governance Workshop, NeurIPS 2025</strong><br>Policy, risk, and audit for trustworthy AI <span class="status">co-organiser</span></div></li>
+        <li><span class="when">Jun 2025</span><div><strong>ResearchTrend.AI</strong><br>HumaniBench: a human-centric framework for large multimodal models evaluation</div></li>
+        <li><span class="when">Nov 2024</span><div><strong>Conestoga College AI Symposium</strong><br>AI, data privacy, and ethics</div></li>
+        <li><span class="when">Jul 2024</span><div><strong>Cohere</strong><br>Mitigating biases in text and LLMs: challenges and strategies</div></li>
+        <li><span class="when">Mar 2024</span><div><strong>ECIR 2024, Glasgow</strong><br>Dissecting news narratives and misinformation</div></li>
+        <li><span class="when">Mar 2024</span><div><strong>Lassonde School, York University</strong><br>Enhancing fairness in large language models</div></li>
+        <li><span class="when">Jan 2024</span><div><strong>Rogers Catalyst, Toronto Metropolitan University</strong><br>Cybersecurity and AI: who loses? The case for more inclusive engagement</div></li>
+        <li><span class="when">Aug 2023</span><div><strong>Human-Medical AI Symposium, AAAI 2023</strong><br>Fairness in machine learning meets equity in healthcare</div></li>
+        <li><span class="when">Jun 2023</span><div><strong>ICA 2023</strong><br>Accuracy meets diversity in a news recommender system <span class="status">keynote</span></div></li>
+        <li><span class="when">Apr 2023</span><div><strong>Rice University</strong><br>Connecting fairness in machine learning with public health equity</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="people" class="band">
+  <div class="wrap cols">
+    <h2>People</h2>
+    <div class="body">
+      <h3>Board of directors</h3>
+      <ul class="people">
+        <li>
+          <h3>Dr. Syed Raza Bashir</h3>
+          <div class="role">Founder, Chair of the Board</div>
+          <p>Incorporated the lab in 2025. Capstone supervisor at Sheridan College, Humber College, and Conestoga College. Formerly board-elected Director of IT at York Condominium Corporation 76 (2019 to 2025), where he led cloud migration and governance programmes. Responsible for strategy, finances, and institutional partnerships.</p>
+        </li>
+        <li>
+          <h3>Dr. Shaina Raza</h3>
+          <div class="role">Co-founder, Director, and Research Director</div>
+          <p>Applied Machine Learning Scientist in Responsible AI at the Vector Institute and co-lead of Work Package 3 of the Horizon Europe AIXPERT project. Former CIHR Health System Impact Fellow working on equity in public-health AI. Responsible AI Leader of the Year (Women in AI, North America, 2025), one of The Peak's Emerging Leaders 2026, and on the Stanford/Elsevier top 2% list. Sits on CIHR and Killam peer-review committees. Principal investigator on the lab's research programme.</p>
+        </li>
+        <li>
+          <h3>Dr. Khurram Khalid</h3>
+          <div class="role">Director and Scientist</div>
+          <p>Researcher in opportunistic networks, secure routing, and energy-efficient protocols, with publications in Internet of Things (Elsevier) and IEEE venues. Leads the lab's work on secure and resilient systems.</p>
+        </li>
+        <li>
+          <h3>Shujaat Feroze</h3>
+          <div class="role">Director, IT Infrastructure</div>
+          <p>M.S., University of Wollongong. More than a decade of enterprise IT leadership at Telstra, Qantas, Saunders International, and Comcare. Responsible for the lab's cloud, security, and operational infrastructure.</p>
+        </li>
+      </ul>
+
+      <h3>Scientific advisory board</h3>
+      <ul class="people">
+        <li>
+          <h3>Dr. Rizwan Qureshi</h3>
+          <div class="role">Scientific Advisor</div>
+          <p>Senior Research Fellow at Massachusetts General Hospital, Harvard Medical School, where he works on foundation models for women's health and sex-specific disease. Previously at MD Anderson Cancer Center and the University of Central Florida. Senior member of IEEE and DAAD AI Fellow; about 6,000 citations. Co-author of the lab's ACM Computing Surveys review of responsible generative AI.</p>
+        </li>
+        <li>
+          <h3>Prof. Athanasios Vasilakos</h3>
+          <div class="role">Scientific Advisor</div>
+          <p>Distinguished Professor at the Center for AI Research, University of Agder, Norway, and Dean of Class VI of the European Academy of Sciences and Arts. Web of Science Highly Cited Researcher with more than 80,000 citations across AI, cybersecurity, and the Internet of Things. Advises on European partnerships and research direction.</p>
+        </li>
+      </ul>
+
+      <h3>Management and operations</h3>
+      <ul class="people">
+        <li>
+          <h3>Imran Liaquat</h3>
+          <div class="role">Advisor, Strategy and Operations</div>
+          <p>Management consultant with more than two decades of international experience helping organisations develop and execute strategy, transform operations, and deliver complex business initiatives. A PMI Authorized Trainer, he has trained and mentored thousands of professionals across North America, Europe, and the Middle East. His expertise spans strategy development and execution, the Balanced Scorecard, and KPI and OKR frameworks, together with portfolio, programme, and project management, risk and quality management, and organisational change. At SRLab he advises on organisational strategy, governance, operational effectiveness, and funding decisions, helping align the research portfolio with sustainable growth, strategic priorities, and partnerships.</p>
+        </li>
+      </ul>
+
+      <h3>Students and interns</h3>
+      <p>Graduate students and research interns join the lab for defined projects, usually leading to a co-authored publication or a public release.</p>
+      <ul class="people">
+        <li>
+          <h3>Mahveen Raza</h3>
+          <div class="role">Research Intern</div>
+          <p>Works on AI sustainability, bias in generative models, and deepfake detection. Co-author of four NeurIPS 2025 workshop papers (GenProCC and Muslims in ML), including studies of carbon literacy for generative AI and occupational stereotypes in text-to-image models, and lead author of the lab's NeurIPS 2025 educational materials, which she presented in San Diego. Currently working on the deepfake forensics programme. <a href="https://mahveenraza10.github.io" target="_blank" rel="noopener">Portfolio</a></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="equity">
+  <div class="wrap cols">
+    <h2>Women and communities left out of AI</h2>
+    <div class="body">
+      <p class="lead">AI systems are trained on the world as it has been recorded, and the record is uneven. Women, racialised people, newcomers, and people outside English-speaking, high-income settings are the groups most often misdescribed or overlooked by these systems, and least often in the room when they are designed. A large part of our research exists to make that visible and measurable.</p>
+      <h3>What our research has found</h3>
+      <p>Image generators change who they draw depending on the grammatical gender of a word, and assign occupations along stereotyped lines. Vision-language models rate the same content differently depending on the apparent gender or ethnicity of a face. Audio-video models perform unevenly across the demographic groups in our SONIC-O1 benchmark. Bias-detection tools themselves give different verdicts depending on how they are run. These are not abstract concerns; they shape hiring screens, content moderation, health information, and news feeds.</p>
+      <h3>How the lab is built</h3>
+      <p>SRLab's research programme is led by a woman. Our board includes a researcher whose full-time work is AI for women's health. Our founders are immigrants to Canada who built their careers here, and most of our students and interns come from groups that remain underrepresented in AI research. We do not think that makes our work better by itself, but it does mean the questions we ask start from lived experience rather than from a checklist.</p>
+      <h3>What we are committing to</h3>
+      <p>Every benchmark we release reports results by demographic group, not only in aggregate. We give priority in student and intern placements to women and to people from underrepresented communities, and we pay for the work wherever funding allows. We publish our methods so that community organisations, regulators, and journalists can check AI systems themselves rather than take a vendor's word. And we are seeking partners, including through Women and Gender Equality Canada and provincial programmes, to turn these findings into changes in how institutions procure and audit AI.</p>
+    </div>
+  </div>
+</section>
+
+<section id="partners" class="band">
+  <div class="wrap cols">
+    <h2>Partners and affiliations</h2>
+    <div class="body">
+      <p>Institutions our members belong to or collaborate with. Listing here does not imply endorsement by the institution.</p>
+      <div class="groups">
+        <div>
+          <h3>Universities and research institutes</h3>
+          <ul>
+            <li>Vector Institute for AI</li><li>University of Toronto</li><li>Toronto Metropolitan University</li><li>University of Agder</li><li>Harvard Medical School / MGH</li><li>Cornell University</li><li>University of Groningen</li><li>University of Central Florida</li><li>University of Guelph</li><li>University of Tennessee HSC</li><li>University of Wollongong</li><li>Clarkson University</li><li>Arizona State University</li><li>Mayo Clinic</li><li>Helmholtz Munich</li><li>Sheridan, Humber, and Conestoga Colleges</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Programmes and funders</h3>
+          <ul>
+            <li>Horizon Europe (AIXPERT)</li><li>Canadian Institutes of Health Research</li><li>CIFAR AI and Society</li><li>NSERC</li><li>Partnership on AI</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Professional bodies</h3>
+          <ul>
+            <li>IEEE</li><li>ACM</li><li>European Academy of Sciences and Arts</li><li>NeurIPS, ICML, AAAI, ACL</li><li>IASEAI</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="governance">
+  <div class="wrap cols">
+    <h2>Governance and research integrity</h2>
+    <div class="body">
+      <p class="lead">Scientific Research-AI Lab, operating as SRLab, is incorporated under the Canada Not-for-profit Corporations Act (corporation number 1697413-9, incorporated 7 May 2025) and is governed by its board of directors. The board approves the research programme, budget, and any partnership or funding agreement.</p>
+      <h3>Disclosure of affiliations</h3>
+      <p>Every member's external affiliation, academic or industrial, is listed on this page. Work carried out at another institution is attributed to that institution in publications and on this site.</p>
+      <h3>Separation of resources</h3>
+      <p>Lab funds, data, and computing are used only for lab projects. Members do not use lab resources for work belonging to their employers, and do not bring employer resources into lab projects without a written agreement.</p>
+      <h3>Conflicts of interest</h3>
+      <p>Before a grant application or partnership is signed, the board reviews potential conflicts. A director with a conflict does not take part in the decision. Conflict declarations are recorded in the board minutes.</p>
+      <h3>Open outputs</h3>
+      <p>Publications are made available as open-access preprints. Datasets and code are released under permissive licences unless a data-provider agreement prevents it, in which case we say so.</p>
+      <p class="note">Questions about our governance can be sent to <a href="mailto:contact@srlab.ai">contact@srlab.ai</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap cols">
+    <h2>Working with us</h2>
+    <div class="body">
+      <p class="lead">We are looking for funding partners, consulting clients, host institutions for student placements, and collaborators who want to test AI systems against real-world harms rather than benchmark leaderboards.</p>
+      <p>Our current priorities are the evaluation science of AI agents, forensic detection of synthetic media, and accounting for the environmental cost of AI. We are pursuing support through Canadian programmes such as NSERC, CIFAR, and Innovation, Science and Economic Development Canada, through Women and Gender Equality Canada's leadership and economic opportunity programmes, through follow-on Horizon Europe calls, and through foundations such as Schmidt Sciences and Mozilla.</p>
+      <p>If you would like to talk, write to us. We reply to every message.</p>
+      <div class="contact-cta">
+        <p>Tell us about the system you want tested, or the programme you want to fund.</p>
+        <a class="btn" href="mailto:contact@srlab.ai">contact@srlab.ai</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>SRLab</h4>
+      <p>Scientific Research-AI Lab, operating as SRLab. A registered not-for-profit corporation in Canada, no. 1697413-9.</p>
+      <p class="fine">&copy; 2026 Scientific Research-AI Lab. Research outputs are released under open licences unless stated otherwise.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <ul><li><a href="#tools">Tools and proofs of concept</a></li><li><a href="#consulting">Consulting</a></li><li><a href="#papers">Papers</a></li><li><a href="#talks">Talks</a></li><li><a href="#people">People</a></li></ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul><li><a href="mailto:contact@srlab.ai">contact@srlab.ai</a></li><li>Ontario, Canada</li><li><a href="#governance">Governance and research integrity</a></li></ul>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
